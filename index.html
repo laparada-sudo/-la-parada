@@ -47,6 +47,27 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 .check{display:flex;align-items:center;gap:8px;padding:6px 0;font-size:14px}.check input{width:auto}
 @media(max-width:850px){.grid{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:600px){.grid{grid-template-columns:1fr}.info-strip{margin:0;border-radius:0;grid-template-columns:1fr}.info:not(:last-child){border-right:0;border-bottom:1px solid var(--l)}.info{padding:12px}.hero{padding-top:30px}.hero-logo{width:115px;height:115px}.brand span{font-size:17px}.cats{top:65px}.section-title h2{font-size:25px}}
+
+.receipt-back{display:none;position:fixed;inset:0;background:rgba(0,0,0,.72);z-index:70;padding:12px;overflow:auto}
+.receipt-back.show{display:flex;align-items:center;justify-content:center}
+.receipt-modal{width:min(430px,100%);max-height:94vh;overflow:auto;background:#f3eee7;border-radius:20px;padding:14px}
+.receipt-paper{background:#fff;color:#111;padding:24px 18px 28px;box-shadow:0 8px 25px rgba(0,0,0,.2);font-family:"Courier New",Courier,monospace;position:relative}
+.receipt-paper:before,.receipt-paper:after{content:"";display:block;height:10px;background:linear-gradient(135deg,transparent 7px,#fff 0) 0 0/14px 10px repeat-x;margin:-24px -18px 16px}
+.receipt-paper:after{margin:18px -18px -38px;transform:rotate(180deg)}
+.receipt-brand{text-align:center;font-size:27px;font-weight:900;letter-spacing:2px;margin:4px 0 10px}
+.receipt-center{text-align:center;font-size:12px;line-height:1.5}
+.receipt-rule{border:0;border-top:2px dashed #222;margin:13px 0}
+.receipt-head{display:grid;grid-template-columns:35px 1fr auto;gap:7px;font-size:12px;font-weight:900}
+.receipt-item{padding:9px 0;border-bottom:1px dashed #999;font-size:12px}
+.receipt-item-title{display:grid;grid-template-columns:28px 1fr auto;gap:5px;font-weight:900}
+.receipt-extra{padding-left:33px;color:#444;line-height:1.4;margin-top:3px}
+.receipt-total{display:flex;justify-content:space-between;font-size:21px;font-weight:900;margin:15px 0}
+.receipt-thanks{text-align:center;font-weight:900;font-size:13px;line-height:1.6}
+.receipt-data{font-size:11px;line-height:1.5}
+.receipt-actions{display:grid;gap:9px;margin-top:14px}
+.receipt-actions button{width:100%;padding:13px;border:0;border-radius:11px;font-weight:900}
+.wa-receipt{background:#25d366;color:#fff}.copy-receipt{background:#fff;color:#111;border:1px solid #ccc!important}.close-receipt{background:#111;color:#fff}
+
 </style>
 </head>
 <body>
@@ -193,11 +214,23 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 <input id="direccion" placeholder="Dirección / colonia *">
 <select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta al entregar</option></select>
 <textarea id="notas" rows="3" placeholder="Notas del pedido"></textarea>
-<button class="order" onclick="sendWA()">📲 Enviar pedido por WhatsApp</button>
+<button class="order" onclick="sendWA()">🧾 Revisar pedido / recibo</button>
 <p class="small">Revisa el pedido en WhatsApp antes de enviarlo.</p>
 </div></aside>
 
 <div id="modalback" class="modalback"><div class="modal" id="modal"></div></div>
+
+
+<div id="receiptBack" class="receipt-back">
+  <div class="receipt-modal">
+    <div class="receipt-paper" id="receiptPaper"></div>
+    <div class="receipt-actions">
+      <button class="wa-receipt" onclick="sendReceiptWA()">📲 Enviar recibo por WhatsApp</button>
+      <button class="copy-receipt" onclick="copyReceipt()">📋 Copiar pedido</button>
+      <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
+    </div>
+  </div>
+</div>
 
 <script>
 const cart=[];
@@ -283,21 +316,65 @@ ${x.extra?`<div class="line-extra">${esc(x.extra)}</div>`:''}
 document.getElementById('total').textContent='$'+cart.reduce((s,x)=>s+x.price*x.qty,0);
 }
 
-function sendWA(){
-if(!cart.length){alert('Agrega al menos un producto.');return}
-const direccion=document.getElementById('direccion').value.trim();
-if(!direccion){alert('Por favor escribe tu dirección.');return}
-const nombre=document.getElementById('nombre').value.trim()||'Cliente';
-const pago=document.getElementById('pago').value;
-const notas=document.getElementById('notas').value.trim();
-const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
-let msg='*NUEVO PEDIDO - LA PARADA*\\n\\n';
-msg+=`*Cliente:* ${nombre}\\n*Dirección:* ${direccion}\\n*Pago:* ${pago}\\n\\n*PEDIDO:*\\n`;
-cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\\n  _'+x.extra+'_':''}\\n`);
-msg+=`\\n*TOTAL: $${total}*`;
-if(notas)msg+=`\\n\\n*Notas:* ${notas}`;
-msg+='\\n\\n_Enviado desde la página de La Parada_';
-window.open(`https://wa.me/${WA}?text=${encodeURIComponent(msg)}`,'_blank');
+function buildOrder(){
+  const direccion=document.getElementById('direccion').value.trim();
+  if(!cart.length){alert('Agrega al menos un producto.');return null}
+  if(!direccion){alert('Por favor escribe tu dirección.');return null}
+  const nombre=document.getElementById('nombre').value.trim()||'Cliente';
+  const pago=document.getElementById('pago').value;
+  const notas=document.getElementById('notas').value.trim();
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const orderNo=String(Date.now()).slice(-5);
+  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
+  return {direccion,nombre,pago,notas,total,orderNo,date};
+}
+
+function makeMessage(o){
+  let msg='*NUEVO PEDIDO - LA PARADA*\n';
+  msg+=`Pedido #${o.orderNo}\n\n`;
+  msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
+  cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\n  _'+x.extra+'_':''}\n`);
+  msg+=`\n*TOTAL: $${o.total}*`;
+  if(o.notas)msg+=`\n\n*Notas:* ${o.notas}`;
+  msg+='\n\n_Enviado desde la página de La Parada_';
+  return msg;
+}
+
+function showReceipt(){
+  const o=buildOrder(); if(!o)return;
+  let lines=cart.map(x=>`
+    <div class="receipt-item">
+      <div class="receipt-item-title"><span>${x.qty}</span><span>${esc(x.name)}</span><span>$${x.price*x.qty}</span></div>
+      ${x.extra?`<div class="receipt-extra">${esc(x.extra)}</div>`:''}
+    </div>`).join('');
+  document.getElementById('receiptPaper').innerHTML=`
+    <div class="receipt-brand">LA PARADA</div>
+    <div class="receipt-center">HAMBURGUESAS · BURRITOS · ALITAS<br>Pedido #${o.orderNo}<br>${o.date}</div>
+    <hr class="receipt-rule">
+    <div class="receipt-data"><b>CLIENTE:</b> ${esc(o.nombre)}<br><b>DIRECCIÓN:</b> ${esc(o.direccion)}<br><b>PAGO:</b> ${esc(o.pago)}</div>
+    <hr class="receipt-rule">
+    <div class="receipt-head"><span>CANT.</span><span>PRODUCTO</span><span>PRECIO</span></div>
+    ${lines}
+    <div class="receipt-total"><span>TOTAL</span><span>$${o.total}</span></div>
+    ${o.notas?`<div class="receipt-data"><b>NOTAS:</b><br>${esc(o.notas)}</div><hr class="receipt-rule">`:''}
+    <div class="receipt-thanks">¡GRACIAS POR TU PEDIDO!<br>TE ESPERAMOS<br>🫏</div>
+  `;
+  document.getElementById('receiptBack').classList.add('show');
+}
+
+function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
+function sendWA(){showReceipt()}
+
+function sendReceiptWA(){
+  const o=buildOrder(); if(!o)return;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(o))}`,'_blank');
+}
+async function copyReceipt(){
+  const o=buildOrder(); if(!o)return;
+  try{
+    await navigator.clipboard.writeText(makeMessage(o));
+    alert('Pedido copiado. Ya puedes pegarlo en WhatsApp.');
+  }catch(e){alert('No se pudo copiar automáticamente. Usa “Enviar recibo por WhatsApp”.')}
 }
 render();
 </script>
