@@ -68,6 +68,44 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 .receipt-actions button{width:100%;padding:13px;border:0;border-radius:11px;font-weight:900}
 .wa-receipt{background:#25d366;color:#fff}.copy-receipt{background:#fff;color:#111;border:1px solid #ccc!important}.close-receipt{background:#111;color:#fff}
 
+
+/* V5 — interfaz tipo app móvil */
+body{background:#111}
+.header{box-shadow:0 4px 20px rgba(0,0,0,.25)}
+.hero{min-height:360px;padding-bottom:44px}
+.info-strip{margin-top:0;border-radius:0}
+main{background:#fff8f1}
+.mobile-nav{display:none}
+.drawer{background:#121212;color:#fff}
+.drawer .dhead{border-bottom:1px solid #333;padding-bottom:12px}
+.drawer .close{background:#2a2a2a;color:#fff}
+.drawer .line{border-color:#333}
+.drawer .line-extra,.drawer .small{color:#aaa}
+.drawer .qty button{background:#292929;color:#fff}
+.drawer .total{color:#fff;border-top:1px dashed #555;margin-top:8px}
+.drawer .form input,.drawer .form textarea,.drawer .form select{background:#1f1f1f;color:#fff;border-color:#444}
+.drawer .form input::placeholder,.drawer .form textarea::placeholder{color:#999}
+.receipt-modal{background:#181818}
+.receipt-paper{border-radius:2px}
+@media(max-width:600px){
+  body{padding-bottom:70px}
+  .header{position:fixed;top:0;left:0;right:0}
+  .hero{margin-top:65px}
+  .info-strip{box-shadow:none}
+  .cats{top:65px}
+  main{padding-bottom:85px}
+  .mobile-nav{
+    display:grid;grid-template-columns:repeat(4,1fr);position:fixed;bottom:0;left:0;right:0;
+    z-index:50;background:#101010;border-top:1px solid #333;color:#fff;padding:8px 4px;
+    box-shadow:0 -8px 25px rgba(0,0,0,.25)
+  }
+  .mobile-nav button{background:none;border:0;color:#aaa;font-size:11px;font-weight:800;padding:5px 0}
+  .mobile-nav button span{display:block;font-size:22px;line-height:25px}
+  .mobile-nav button.active{color:#ff6500}
+  .mobile-nav .nav-cart-badge{display:inline-block;background:#ff6500;color:#fff;border-radius:99px;padding:1px 6px;font-size:10px;vertical-align:top;margin-left:-5px}
+  footer{padding-bottom:95px}
+}
+
 </style>
 </head>
 <body>
@@ -206,7 +244,7 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 
 <div id="back" class="back" onclick="closeCart()"></div>
 <aside id="drawer" class="drawer">
-<div class="dhead"><h2>🛒 Tu pedido</h2><button class="close" onclick="closeCart()">×</button></div>
+<div class="dhead"><h2>🛒 TU PEDIDO</h2><button class="close" onclick="closeCart()">×</button></div>
 <div id="cart"></div>
 <div class="total"><span>Total</span><span id="total">$0</span></div>
 <div class="form"><h3>Datos de entrega</h3>
@@ -220,6 +258,14 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 
 <div id="modalback" class="modalback"><div class="modal" id="modal"></div></div>
 
+
+
+<nav class="mobile-nav" aria-label="Navegación móvil">
+  <button class="active" onclick="go('recomendados')"><span>⌂</span>Inicio</button>
+  <button onclick="go('hamburguesas')"><span>🍔</span>Menú</button>
+  <button onclick="openCart()"><span>🛒<i class="nav-cart-badge" id="mobileCount">0</i></span>Carrito</button>
+  <button onclick="go('ubicacion')"><span>📍</span>Ubicación</button>
+</nav>
 
 <div id="receiptBack" class="receipt-back">
   <div class="receipt-modal">
@@ -307,7 +353,7 @@ function minus(i){cart[i].qty--;if(cart[i].qty<=0)cart.splice(i,1);render()}
 function removeLine(i){cart.splice(i,1);render()}
 
 function render(){
-document.getElementById('count').textContent=cart.reduce((s,x)=>s+x.qty,0);
+const itemCount=cart.reduce((s,x)=>s+x.qty,0);document.getElementById('count').textContent=itemCount;const mc=document.getElementById('mobileCount');if(mc)mc.textContent=itemCount;
 const el=document.getElementById('cart');
 if(!cart.length){el.innerHTML='<div class="cart-empty">Tu pedido está vacío.<br>¡Vamos a llenarlo! 🍔</div>';}
 else el.innerHTML=cart.map((x,i)=>`
