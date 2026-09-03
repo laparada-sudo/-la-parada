@@ -215,7 +215,7 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
 <select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta al entregar</option></select>
 <textarea id="notas" rows="3" placeholder="Notas del pedido"></textarea>
 <button class="order" onclick="sendWA()">🧾 Revisar pedido / recibo</button>
-<p class="small">Revisa el pedido en WhatsApp antes de enviarlo.</p>
+<p class="small">Al compartir el recibo, en iPhone podrás elegir WhatsApp desde el menú de compartir. Por seguridad, WhatsApp siempre requiere que confirmes el envío.</p>
 </div></aside>
 
 <div id="modalback" class="modalback"><div class="modal" id="modal"></div></div>
@@ -225,8 +225,9 @@ footer{background:#111;color:#fff;text-align:center;padding:34px 16px}.footlogo{
   <div class="receipt-modal">
     <div class="receipt-paper" id="receiptPaper"></div>
     <div class="receipt-actions">
-      <button class="wa-receipt" onclick="sendReceiptWA()">📲 Enviar recibo por WhatsApp</button>
-      <button class="copy-receipt" onclick="copyReceipt()">📋 Copiar pedido</button>
+      <button class="wa-receipt" onclick="shareReceiptImage()">📲 Compartir recibo por WhatsApp</button>
+      <button class="copy-receipt" onclick="sendReceiptText()">💬 Enviar pedido en texto</button>
+      <button class="copy-receipt" onclick="downloadReceiptImage()">🖼️ Guardar imagen del recibo</button>
       <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
     </div>
   </div>
@@ -365,16 +366,101 @@ function showReceipt(){
 function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
 function sendWA(){showReceipt()}
 
-function sendReceiptWA(){
+function sendReceiptText(){
   const o=buildOrder(); if(!o)return;
   window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(o))}`,'_blank');
 }
-async function copyReceipt(){
-  const o=buildOrder(); if(!o)return;
+
+function receiptSvg(o){
+  const escSvg=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const width=800;
+  let y=165;
+  let items='';
+  cart.forEach(x=>{
+    const title=escSvg(`${x.qty}  ${x.name}`);
+    items+=`<text x="50" y="${y}" class="item">${title}</text><text x="750" y="${y}" text-anchor="end" class="item">$${x.price*x.qty}</text>`;
+    y+=34;
+    if(x.extra){items+=`<text x="78" y="${y}" class="extra">${escSvg(x.extra)}</text>`;y+=28;}
+    y+=10;
+    items+=`<line x1="45" y1="${y}" x2="755" y2="${y}" class="dash"/>`;y+=28;
+  });
+  const notes=o.notas?`<text x="50" y="${y}" class="label">NOTAS</text><text x="50" y="${y+27}" class="extra">${escSvg(o.notas)}</text>`:'';
+  if(o.notas)y+=60;
+  const totalY=y+20;
+  const height=totalY+190;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="100%" height="100%" fill="#f7f7f7"/>
+  <rect x="25" y="20" width="750" height="${height-40}" rx="4" fill="#fff"/>
+  <text x="400" y="78" text-anchor="middle" class="brand">LA PARADA</text>
+  <text x="400" y="108" text-anchor="middle" class="center">HAMBURGUESAS · BURRITOS · ALITAS</text>
+  <text x="400" y="132" text-anchor="middle" class="center">PEDIDO #${escSvg(o.orderNo)} · ${escSvg(o.date)}</text>
+  <line x1="45" y1="145" x2="755" y2="145" class="dash"/>
+  ${items}
+  <line x1="45" y1="${totalY-5}" x2="755" y2="${totalY-5}" class="dash"/>
+  <text x="50" y="${totalY+35}" class="total">TOTAL</text><text x="750" y="${totalY+35}" text-anchor="end" class="total">$${o.total}</text>
+  <text x="50" y="${totalY+75}" class="label">CLIENTE: ${escSvg(o.nombre)}</text>
+  <text x="50" y="${totalY+100}" class="label">PAGO: ${escSvg(o.pago)}</text>
+  <text x="50" y="${totalY+125}" class="label">DIRECCIÓN: ${escSvg(o.direccion)}</text>
+  ${notes}
+  <text x="400" y="${height-70}" text-anchor="middle" class="thanks">¡GRACIAS POR TU PEDIDO!</text>
+  <text x="400" y="${height-45}" text-anchor="middle" class="thanks">LA PARADA · 56 3695 1217</text>
+  <style>
+    .brand{font:900 42px 'Courier New',monospace;letter-spacing:5px;fill:#111}
+    .center{font:700 18px 'Courier New',monospace;fill:#222}
+    .item{font:700 20px 'Courier New',monospace;fill:#111}
+    .extra{font:18px 'Courier New',monospace;fill:#555}
+    .label{font:700 17px 'Courier New',monospace;fill:#222}
+    .total{font:900 29px 'Courier New',monospace;fill:#111}
+    .thanks{font:900 19px 'Courier New',monospace;fill:#111}
+    .dash{stroke:#222;stroke-width:2;stroke-dasharray:9 8}
+  </style>
+</svg>`;
+}
+
+async function makeReceiptFile(){
+  const o=buildOrder(); if(!o)return null;
+  const svg=receiptSvg(o);
+  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
   try{
-    await navigator.clipboard.writeText(makeMessage(o));
-    alert('Pedido copiado. Ya puedes pegarlo en WhatsApp.');
-  }catch(e){alert('No se pudo copiar automáticamente. Usa “Enviar recibo por WhatsApp”.')}
+    const img=new Image();
+    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});
+    const canvas=document.createElement('canvas');
+    canvas.width=800; canvas.height=img.naturalHeight;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#f7f7f7';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+    const png=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+    return {file:new File([png],`La-Parada-Pedido-${o.orderNo}.png`,{type:'image/png'}),order:o};
+  } finally {URL.revokeObjectURL(url);}
+}
+
+async function shareReceiptImage(){
+  try{
+    const result=await makeReceiptFile(); if(!result)return;
+    const {file,order}=result;
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({files:[file],title:`Pedido #${order.orderNo} - La Parada`,text:`Pedido #${order.orderNo} - La Parada`});
+    }else{
+      downloadFile(file);
+      alert('Tu navegador no permite compartir imágenes directamente. Guardé el recibo; puedes abrirlo y compartirlo por WhatsApp.');
+    }
+  }catch(e){
+    if(e && e.name!=='AbortError') alert('No se pudo abrir el menú de compartir. Usa “Guardar imagen del recibo”.');
+  }
+}
+
+async function downloadReceiptImage(){
+  try{
+    const result=await makeReceiptFile(); if(!result)return;
+    downloadFile(result.file);
+  }catch(e){alert('No se pudo crear la imagen del recibo.');}
+}
+
+function downloadFile(file){
+  const url=URL.createObjectURL(file);
+  const a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(url),1000);
 }
 render();
 </script>
