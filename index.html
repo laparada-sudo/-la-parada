@@ -271,9 +271,7 @@ main{background:#fff8f1}
   <div class="receipt-modal">
     <div class="receipt-paper" id="receiptPaper"></div>
     <div class="receipt-actions">
-      <button class="wa-receipt" onclick="shareReceiptImage()">📲 Enviar recibo por WhatsApp</button><div style="text-align:center;font-size:11px;color:#777;margin-top:6px">Se enviará a WhatsApp: <b>+52 56 3695 1217</b></div>
-      <button class="copy-receipt" onclick="sendReceiptText()">💬 Enviar pedido en texto</button>
-      <button class="copy-receipt" onclick="downloadReceiptImage()">🖼️ Guardar imagen del recibo</button>
+      <button class="wa-receipt" onclick="shareReceiptImage()">📲 Enviar recibo por WhatsApp</button><div style="text-align:center;font-size:11px;color:#777;margin-top:6px">Se compartirá la imagen del recibo a WhatsApp: <b>+52 56 3695 1217</b></div>
       <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
     </div>
   </div>
@@ -486,28 +484,21 @@ async function shareReceiptImage(){
     const result=await makeReceiptFile(); if(!result)return;
     const {file,order}=result;
     if(navigator.canShare && navigator.canShare({files:[file]})){
-      await navigator.share({files:[file],title:`Pedido #${order.orderNo} - La Parada`,text:`Pedido #${order.orderNo} - La Parada`});
+      await navigator.share({
+        files:[file],
+        title:`Pedido #${order.orderNo} - La Parada`,
+        text:`Pedido #${order.orderNo} - La Parada · WhatsApp +52 56 3695 1217`
+      });
     }else{
-      downloadFile(file);
-      alert('Tu navegador no permite compartir imágenes directamente. Guardé el recibo; puedes abrirlo y compartirlo por WhatsApp.');
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(order))}`,'_blank');
+      alert('Tu navegador no permite adjuntar la imagen automáticamente. WhatsApp se abrió con el pedido en texto.');
     }
   }catch(e){
-    if(e && e.name!=='AbortError') alert('No se pudo abrir el menú de compartir. Usa “Guardar imagen del recibo”.');
+    if(e && e.name!=='AbortError') alert('No se pudo abrir el menú de compartir. Intenta de nuevo.');
   }
 }
 
-async function downloadReceiptImage(){
-  try{
-    const result=await makeReceiptFile(); if(!result)return;
-    downloadFile(result.file);
-  }catch(e){alert('No se pudo crear la imagen del recibo.');}
-}
 
-function downloadFile(file){
-  const url=URL.createObjectURL(file);
-  const a=document.createElement('a');a.href=url;a.download=file.name;document.body.appendChild(a);a.click();a.remove();
-  setTimeout(()=>URL.revokeObjectURL(url),1000);
-}
 render();
 </script>
 </body>
