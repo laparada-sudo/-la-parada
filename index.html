@@ -106,6 +106,90 @@ main{background:#fff8f1}
   footer{padding-bottom:95px}
 }
 
+
+/* V7 — ADN de app de pedidos: jerarquía, conversión y móvil */
+:root{
+  --orange:#ff6a00;--orange2:#ff8c1a;--ink:#101010;--cream:#fff7ee;
+  --line:#eadfd5;--muted:#756f69;--green:#25d366;
+}
+body{background:var(--cream)}
+.header{background:#0c0c0c;border-bottom:0}
+.nav{padding:10px 16px}
+.brand img{width:44px;height:44px;border-radius:12px}
+.cart-btn{background:var(--orange);box-shadow:0 8px 22px rgba(255,106,0,.25)}
+.hero{
+  background:
+    radial-gradient(circle at 75% 30%,rgba(255,106,0,.42),transparent 28%),
+    radial-gradient(circle at 15% 10%,rgba(255,140,26,.20),transparent 30%),
+    linear-gradient(125deg,#090909,#171717 60%,#3b1805);
+  text-align:left;padding:56px 18px 72px;overflow:hidden
+}
+.hero-inner{max-width:1150px;margin:auto;display:grid;grid-template-columns:1.05fr .95fr;align-items:center;gap:30px}
+.hero-copy{max-width:620px}
+.eyebrow{display:inline-block;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 11px;font-size:12px;font-weight:900;letter-spacing:.5px}
+.hero h1{font-size:clamp(48px,8vw,86px);letter-spacing:-4px;line-height:.92;margin:18px 0}
+.hero h1 span{color:#ff8c1a}
+.hero p{font-size:18px;line-height:1.5;max-width:570px;color:#e9e5e1;margin-bottom:22px}
+.actions{justify-content:flex-start}
+.primary{background:var(--orange);box-shadow:0 10px 25px rgba(255,106,0,.28)}
+.secondary{background:#fff}
+.hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;color:#ddd;font-size:12px;font-weight:800}
+.hero-meta span{background:rgba(255,255,255,.08);border-radius:999px;padding:8px 10px}
+.hero-art{min-height:320px;position:relative;display:grid;place-items:center}
+.hero-logo{width:min(300px,70vw);height:min(300px,70vw);border-radius:38px;object-fit:cover;box-shadow:0 30px 80px rgba(0,0,0,.45);border:6px solid rgba(255,255,255,.08);position:relative;z-index:2}
+.hero-glow{position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,106,0,.32);filter:blur(35px)}
+.floating-card{position:absolute;right:0;bottom:12px;z-index:3;background:#fff;color:#111;border-radius:18px;padding:13px 15px;box-shadow:0 18px 45px rgba(0,0,0,.28);display:grid;gap:3px;max-width:230px}
+.floating-card span{font-size:11px;color:#777}
+.order-choices{max-width:1150px;margin:-28px auto 0;position:relative;z-index:8;padding:0 16px;display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.order-choices button,.order-choices a{border:0;background:#fff;color:#111;text-decoration:none;border-radius:18px;padding:15px;display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:12px;box-shadow:0 10px 28px rgba(30,15,5,.10);text-align:left}
+.order-choices button:hover,.order-choices a:hover{transform:translateY(-2px)}
+.choice-icon{width:42px;height:42px;display:grid;place-items:center;background:#fff1e4;border-radius:13px;font-size:20px}
+.order-choices b{display:block;font-size:14px}
+.order-choices small{display:block;color:#777;font-size:11px;margin-top:2px}
+.order-choices strong{font-size:20px;color:var(--orange)}
+.cats{top:65px;background:rgba(255,255,255,.96);backdrop-filter:blur(10px)}
+.cat{border-color:#e5d8cc}
+.cat.active,.cat:hover{background:#111}
+.search-wrap{max-width:1150px;margin:0 auto;padding:16px 16px 0;background:var(--cream)}
+.search-box{display:flex;align-items:center;gap:9px;background:#fff;border:1px solid var(--line);border-radius:15px;padding:0 14px;box-shadow:0 6px 20px rgba(30,15,5,.05)}
+.search-box span{font-size:25px;color:#777}
+.search-box input{border:0;outline:0;width:100%;padding:13px 0;background:transparent}
+.promo-wrap{max-width:1150px;margin:auto;padding:20px 16px 0}
+.promo{background:linear-gradient(135deg,#151515,#2a170b);color:#fff;border-radius:22px;padding:22px;display:flex;justify-content:space-between;align-items:center;gap:18px;box-shadow:0 15px 35px rgba(20,10,0,.16)}
+.promo-kicker{font-size:11px;font-weight:950;color:#ff9a35;letter-spacing:1px}
+.promo h2{font-size:25px;margin:5px 0}
+.promo p{color:#cfc7c0;font-size:13px}
+.promo a{background:var(--orange);color:#fff;text-decoration:none;font-weight:900;padding:11px 14px;border-radius:12px;white-space:nowrap}
+main{background:var(--cream)}
+.section{scroll-margin-top:130px}
+.card{border-radius:20px;border-color:var(--line);transition:.18s;overflow:hidden}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 30px rgba(40,20,5,.09)}
+.card h3{font-size:20px}
+.add{background:#111}
+.location{box-shadow:0 15px 35px rgba(0,0,0,.15)}
+@media(max-width:800px){
+  .hero-inner{grid-template-columns:1fr}
+  .hero{padding-top:35px;text-align:center}
+  .hero-copy{margin:auto}
+  .actions{justify-content:center}
+  .hero-meta{justify-content:center}
+  .hero-art{min-height:260px}
+  .hero-logo{width:220px;height:220px}
+  .floating-card{right:5%;bottom:0}
+  .order-choices{grid-template-columns:1fr;margin-top:0;padding-top:10px}
+}
+@media(max-width:600px){
+  .hero{margin-top:65px}
+  .hero h1{font-size:52px}
+  .hero p{font-size:16px}
+  .hero-art{min-height:230px}
+  .hero-logo{width:190px;height:190px}
+  .promo{padding:18px;align-items:flex-start}
+  .promo h2{font-size:21px}
+  .promo a{font-size:12px;padding:10px}
+  .search-wrap{padding-top:12px}
+}
+
 </style>
 </head>
 <body>
@@ -118,16 +202,44 @@ main{background:#fff8f1}
 </header>
 
 <section class="hero">
-<img class="hero-logo" src="logo.jpg" alt="Logo La Parada">
-<h1>LA PARADA</h1>
-<p>Hamburguesas, burritos, alitas y mucho más. Arma tu pedido y mándalo directo por WhatsApp.</p>
-<div class="actions"><a class="primary" href="#menu">🍔 Ver menú</a><button class="secondary" onclick="openCart()">🛒 Mi pedido</button></div>
+  <div class="hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow">🔥 HECHO AL MOMENTO</span>
+      <h1>Tu antojo,<br><span>en La Parada.</span></h1>
+      <p>Hamburguesas, burritos, alitas, boneless y más. Arma tu pedido en segundos.</p>
+      <div class="actions">
+        <a class="primary" href="#menu">🍔 Pedir ahora</a>
+        <button class="secondary" onclick="openCart()">🛒 Ver carrito</button>
+      </div>
+      <div class="hero-meta">
+        <span>🕐 Jue–Sáb · 7–11 PM</span>
+        <span>📲 WhatsApp directo</span>
+      </div>
+    </div>
+    <div class="hero-art">
+      <div class="hero-glow"></div>
+      <img class="hero-logo" src="logo.jpg" alt="La Parada">
+      <div class="floating-card"><b>⭐ Favoritos</b><span>Arrachera · Alitas · Burritos</span></div>
+    </div>
+  </div>
 </section>
 
-<div class="info-strip">
-<div class="info"><b>🕐 Horario</b><span>Jueves a sábado · 7:00 PM a 11:00 PM</span></div>
-<div class="info"><b>📲 Pedidos</b><span>56 3695 1217</span></div>
-<div class="info"><b>🚚 Entrega</b><span>Indica tu dirección al hacer el pedido</span></div>
+<div class="order-choices">
+  <button onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})">
+    <span class="choice-icon">🛵</span>
+    <span><b>A domicilio</b><small>Agrega tu dirección al finalizar</small></span>
+    <strong>→</strong>
+  </button>
+  <button onclick="document.getElementById('ubicacion').scrollIntoView({behavior:'smooth'})">
+    <span class="choice-icon">🏪</span>
+    <span><b>Pasar a recoger</b><small>Visítanos en Naucalpan</small></span>
+    <strong>→</strong>
+  </button>
+  <a href="https://wa.me/525636951217" target="_blank" rel="noopener">
+    <span class="choice-icon">💬</span>
+    <span><b>WhatsApp</b><small>+52 56 3695 1217</small></span>
+    <strong>→</strong>
+  </a>
 </div>
 
 <nav class="cats"><div class="cat-inner">
@@ -141,6 +253,24 @@ main{background:#fff8f1}
 <button class="cat" onclick="go('frappes')">🥤 Frappés</button>
 <button class="cat" onclick="go('bebidas')">🥤 Bebidas</button>
 </div></nav>
+
+<div class="search-wrap">
+  <div class="search-box">
+    <span>⌕</span>
+    <input id="menuSearch" type="search" placeholder="Buscar hamburguesa, burrito, alitas..." oninput="filterMenu(this.value)">
+  </div>
+</div>
+
+<div class="promo-wrap">
+  <div class="promo">
+    <div>
+      <span class="promo-kicker">🔥 LA PARADA</span>
+      <h2>Empieza con los favoritos</h2>
+      <p>Elige una categoría y arma tu pedido.</p>
+    </div>
+    <a href="#recomendados">Ver favoritos →</a>
+  </div>
+</div>
 
 <main id="menu">
 
@@ -286,6 +416,17 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
 function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
 function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function filterMenu(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    card.style.display = (!q || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.section').forEach(section=>{
+    const visible=[...section.querySelectorAll('.card')].some(c=>c.style.display!=='none');
+    section.style.display=visible?'':'none';
+  });
+}
+
 function addSimple(name,price){cart.push({name,price,qty:1,extra:''});render();openCart();}
 function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});render();openCart();}
 
