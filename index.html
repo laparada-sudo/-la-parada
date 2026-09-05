@@ -190,6 +190,79 @@ main{background:var(--cream)}
   .search-wrap{padding-top:12px}
 }
 
+
+/* V8 — categorías horizontales, productos en scroll vertical */
+.category-track{
+  display:flex;
+  width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  max-width:none;
+  padding:0;
+}
+.category-track::-webkit-scrollbar{display:none}
+.category-track>.section{
+  flex:0 0 100%;
+  width:100%;
+  max-width:100%;
+  height:calc(100vh - 150px);
+  min-height:520px;
+  overflow-y:auto;
+  overflow-x:hidden;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  margin:0;
+  padding:28px max(16px,calc((100vw - 1118px)/2)) 110px;
+  background:var(--c);
+  scrollbar-width:thin;
+}
+.category-track>.section>.section-title{
+  position:sticky;
+  top:-1px;
+  z-index:5;
+  background:rgba(255,248,241,.96);
+  backdrop-filter:blur(8px);
+  padding:7px 0 14px;
+}
+.category-track>.section .grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:12px;
+  max-width:760px;
+  margin:auto;
+}
+.category-track>.section .card{
+  width:100%;
+  padding:17px;
+}
+.category-track>.section .note{
+  max-width:760px;
+  margin:10px auto 0;
+}
+.category-track>.section-title h2{font-size:28px}
+.category-track>.section-title p{font-size:12px}
+.category-track>.section::-webkit-scrollbar{width:5px}
+.category-track>.section::-webkit-scrollbar-thumb{background:#d9c9bd;border-radius:99px}
+
+.category-hint{
+  display:flex;justify-content:center;align-items:center;gap:8px;
+  color:#777;font-size:11px;font-weight:800;padding:9px 16px 0;
+}
+.category-hint b{color:var(--o)}
+@media(max-width:600px){
+  .category-track>.section{
+    height:calc(100vh - 205px);
+    min-height:500px;
+    padding:18px 14px 100px;
+  }
+  .category-track>.section>.section-title{top:-1px}
+  .category-track>.section .card h3{font-size:18px}
+}
+
 </style>
 </head>
 <body>
@@ -274,6 +347,8 @@ main{background:var(--cream)}
 
 <main id="menu">
 
+<div class="category-hint">← <b>Desliza horizontalmente</b> para cambiar de categoría →</div>
+<div class="category-track" id="categoryTrack">
 <section class="section" id="recomendados">
 <div class="section-title"><h2>⭐ Los favoritos</h2><p>Para empezar</p></div>
 <div class="grid">
@@ -358,6 +433,8 @@ main{background:var(--cream)}
 </div>
 </section>
 
+</div>
+
 <section class="section" id="ubicacion">
 <div class="location">
 <h2>📍 La Parada</h2>
@@ -415,7 +492,16 @@ let pending=null;
 function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
 function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
 function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
-function go(id){document.getElementById(id).scrollIntoView({behavior:'smooth'});}
+function go(id){
+  const el=document.getElementById(id);
+  if(!el) return;
+  const track=document.getElementById('categoryTrack');
+  if(track && el.parentElement===track){
+    track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
+  }else{
+    el.scrollIntoView({behavior:'smooth'});
+  }
+}
 function filterMenu(q){
   q = q.trim().toLowerCase();
   document.querySelectorAll('.card').forEach(card=>{
@@ -641,6 +727,25 @@ async function shareReceiptImage(){
 
 
 render();
+
+const categoryTrack=document.getElementById('categoryTrack');
+const categorySections=categoryTrack?[...categoryTrack.querySelectorAll(':scope > .section')]:[];
+const categoryButtons=[...document.querySelectorAll('.cat')];
+if(categoryTrack && categorySections.length){
+  const syncCategory=()=>{
+    const center=categoryTrack.scrollLeft+categoryTrack.clientWidth/2;
+    let best=0,dist=Infinity;
+    categorySections.forEach((s,i)=>{
+      const d=Math.abs((s.offsetLeft+s.offsetWidth/2)-center);
+      if(d<dist){dist=d;best=i;}
+    });
+    categoryButtons.forEach((btn,i)=>btn.classList.toggle('active',i===best));
+  };
+  categoryTrack.addEventListener('scroll',()=>requestAnimationFrame(syncCategory),{passive:true});
+  window.addEventListener('resize',syncCategory);
+  syncCategory();
+}
+
 </script>
 </body>
 </html>
