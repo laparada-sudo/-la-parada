@@ -263,6 +263,45 @@ main{background:var(--cream)}
   .category-track>.section .card h3{font-size:18px}
 }
 
+
+/* V9 — barra de categorías dinámica */
+.cats{
+  overflow:hidden;
+  z-index:30;
+}
+.cat-inner{
+  display:flex;
+  gap:8px;
+  width:max-content;
+  min-width:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  padding:9px 16px;
+}
+.cat-inner::-webkit-scrollbar{display:none}
+.cat{
+  flex:0 0 auto;
+  white-space:nowrap;
+  transition:background .2s,color .2s,transform .2s;
+}
+.cat.active{
+  transform:scale(1.03);
+  box-shadow:0 4px 12px rgba(0,0,0,.12);
+}
+@media(max-width:600px){
+  .cat-inner{
+    padding:8px 12px;
+    gap:7px;
+  }
+  .cat{
+    font-size:12px;
+    padding:9px 12px;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -496,8 +535,10 @@ function go(id){
   const el=document.getElementById(id);
   if(!el) return;
   const track=document.getElementById('categoryTrack');
-  if(track && el.parentElement===track){
+  const index=categorySections.indexOf(el);
+  if(track && index>=0){
     track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
+    setActiveCategory(index);
   }else{
     el.scrollIntoView({behavior:'smooth'});
   }
@@ -730,20 +771,48 @@ render();
 
 const categoryTrack=document.getElementById('categoryTrack');
 const categorySections=categoryTrack?[...categoryTrack.querySelectorAll(':scope > .section')]:[];
+const categoryNav=document.querySelector('.cats');
+const categoryInner=document.querySelector('.cat-inner');
 const categoryButtons=[...document.querySelectorAll('.cat')];
+
+function centerActiveCategory(index, behavior='smooth'){
+  const btn=categoryButtons[index];
+  if(!btn || !categoryInner) return;
+  const target=btn.offsetLeft - (categoryInner.clientWidth - btn.offsetWidth)/2;
+  categoryInner.scrollTo({left:Math.max(0,target),behavior});
+}
+
+function setActiveCategory(index, behavior='smooth'){
+  categoryButtons.forEach((btn,i)=>{
+    btn.classList.toggle('active',i===index);
+    btn.setAttribute('aria-current',i===index?'page':'false');
+  });
+  centerActiveCategory(index,behavior);
+}
+
 if(categoryTrack && categorySections.length){
+  let ticking=false;
   const syncCategory=()=>{
-    const center=categoryTrack.scrollLeft+categoryTrack.clientWidth/2;
-    let best=0,dist=Infinity;
-    categorySections.forEach((s,i)=>{
-      const d=Math.abs((s.offsetLeft+s.offsetWidth/2)-center);
-      if(d<dist){dist=d;best=i;}
+    if(ticking) return;
+    ticking=true;
+    requestAnimationFrame(()=>{
+      const center=categoryTrack.scrollLeft+categoryTrack.clientWidth/2;
+      let best=0,dist=Infinity;
+      categorySections.forEach((section,i)=>{
+        const d=Math.abs((section.offsetLeft+section.offsetWidth/2)-center);
+        if(d<dist){dist=d;best=i;}
+      });
+      setActiveCategory(best);
+      ticking=false;
     });
-    categoryButtons.forEach((btn,i)=>btn.classList.toggle('active',i===best));
   };
-  categoryTrack.addEventListener('scroll',()=>requestAnimationFrame(syncCategory),{passive:true});
-  window.addEventListener('resize',syncCategory);
-  syncCategory();
+
+  categoryTrack.addEventListener('scroll',syncCategory,{passive:true});
+  window.addEventListener('resize',()=>setActiveCategory(
+    categorySections.findIndex(s=>Math.abs((s.offsetLeft+s.offsetWidth/2)-(categoryTrack.scrollLeft+categoryTrack.clientWidth/2))<categoryTrack.clientWidth/2) || 0,
+    'auto'
+  ));
+  setTimeout(()=>setActiveCategory(0,'auto'),50);
 }
 
 </script>
