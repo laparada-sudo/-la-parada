@@ -264,17 +264,12 @@ main{background:var(--cream)}
 }
 
 
-/* V9 — pestañas dinámicas */
+/* V9.1 — navegación corregida, conserva botones de pedido */
 .search-wrap{display:none!important}
 .cats{
-  display:flex!important;
-  align-items:center;
-  gap:4px;
-  overflow-x:auto;
-  overflow-y:hidden;
-  white-space:nowrap;
-  scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
+  display:flex!important;align-items:center;gap:4px;
+  overflow-x:auto;overflow-y:hidden;white-space:nowrap;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch;
   justify-content:flex-start!important;
   padding:7px 10px 10px!important;
   background:rgba(255,247,238,.97)!important;
@@ -282,35 +277,19 @@ main{background:var(--cream)}
 }
 .cats::-webkit-scrollbar{display:none}
 .cats .cat{
-  flex:0 0 auto!important;
-  position:relative;
-  background:transparent!important;
-  color:#756e68!important;
-  border:0!important;
-  border-radius:12px!important;
-  padding:10px 13px!important;
-  font-size:12px!important;
-  font-weight:900!important;
+  flex:0 0 auto!important;position:relative;
+  background:transparent!important;color:#756e68!important;
+  border:0!important;border-radius:12px!important;
+  padding:10px 13px!important;font-size:12px!important;font-weight:900!important;
 }
-.cats .cat.active{
-  color:#111!important;
-}
+.cats .cat.active{color:#111!important}
 .cats .cat.active:after{
-  content:"";
-  position:absolute;
-  left:10px;right:10px;bottom:3px;
-  height:3px;border-radius:99px;
-  background:#ff6a00;
+  content:"";position:absolute;left:10px;right:10px;bottom:3px;
+  height:3px;border-radius:99px;background:#ff6a00;
 }
-.bottom-nav{
-  grid-template-columns:repeat(3,1fr)!important;
-}
+.bottom-nav{grid-template-columns:repeat(3,1fr)!important}
 @media(max-width:600px){
-  .cats{
-    position:sticky!important;
-    top:64px!important;
-    z-index:40!important;
-  }
+ .cats{position:sticky!important;top:64px!important;z-index:40!important}
 }
 
 </style>
@@ -365,9 +344,17 @@ main{background:var(--cream)}
   </a>
 </div>
 
-<nav class="cats" aria-label="Categorías"><button class="cat" data-target="recomendados" onclick="go('recomendados')">Favoritos</button><button class="cat" data-target="hamburguesas" onclick="go('hamburguesas')">Hamburguesas</button><button class="cat" data-target="burritos" onclick="go('burritos')">Burritos</button><button class="cat" data-target="alitas" onclick="go('alitas')">Alitas</button><button class="cat" data-target="boneless" onclick="go('boneless')">Boneless</button><button class="cat" data-target="hotdogs" onclick="go('hotdogs')">Hot Dogs</button><button class="cat" data-target="papas" onclick="go('papas')">Papas</button><button class="cat" data-target="frappes" onclick="go('frappes')">Frappés</button><button class="cat" data-target="bebidas" onclick="go('bebidas')">Bebidas</button></nav>
-
-
+<nav class="cats"><div class="cat-inner">
+<button class="cat active" onclick="go('recomendados')">⭐ Recomendados</button>
+<button class="cat" onclick="go('hamburguesas')">🍔 Hamburguesas</button>
+<button class="cat" onclick="go('burritos')">🌯 Burritos</button>
+<button class="cat" onclick="go('alitas')">🍗 Alitas</button>
+<button class="cat" onclick="go('boneless')">🍗 Boneless</button>
+<button class="cat" onclick="go('hotdogs')">🌭 Hot Dogs</button>
+<button class="cat" onclick="go('papas')">🍟 Papas</button>
+<button class="cat" onclick="go('frappes')">🥤 Frappés</button>
+<button class="cat" onclick="go('bebidas')">🥤 Bebidas</button>
+</div></nav>
 
 <div class="promo-wrap">
   <div class="promo">
@@ -519,41 +506,295 @@ main{background:var(--cream)}
   </div>
 </div>
 
-
 <script>
+const cart=[];
+const WA='525636951217';
+let pending=null;
+
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));}
+function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
+function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
 function go(id){
   const el=document.getElementById(id);
-  const track=document.getElementById('categoryTrack');
   if(!el) return;
+  const track=document.getElementById('categoryTrack');
   if(track && el.parentElement===track){
-    track.scrollTo({left:el.offsetLeft, behavior:'smooth'});
+    track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
   }else{
     el.scrollIntoView({behavior:'smooth'});
   }
 }
+function filterMenu(q){
+  q = q.trim().toLowerCase();
+  document.querySelectorAll('.card').forEach(card=>{
+    card.style.display = (!q || card.innerText.toLowerCase().includes(q)) ? '' : 'none';
+  });
+  document.querySelectorAll('.section').forEach(section=>{
+    const visible=[...section.querySelectorAll('.card')].some(c=>c.style.display!=='none');
+    section.style.display=visible?'':'none';
+  });
+}
+
+function addSimple(name,price){cart.push({name,price,qty:1,extra:''});render();openCart();}
+function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});render();openCart();}
+
+function customBurger(name,base){
+pending={type:'burger',name,base};
+document.getElementById('modal').innerHTML=`
+<h2>🍔 ${esc(name)}</h2><p>Personaliza tu hamburguesa.</p>
+<label><b>¿Con papas?</b></label>
+<select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
+<label><b>Queso</b></label><select class="select" id="m_queso"><option>El de la receta</option><option>Americano</option><option>Oaxaca</option><option>Sin queso</option></select>
+<label class="check"><input type="checkbox" id="m_sceb"> Sin cebolla</label>
+<label class="check"><input type="checkbox" id="m_sjit"> Sin jitomate</label>
+<label class="check"><input type="checkbox" id="m_slech"> Sin lechuga</label>
+<label class="check"><input type="checkbox" id="m_spep"> Sin pepinillos</label>
+<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmBurger()">Agregar</button></div>`;
+showModal();
+}
+function confirmBurger(){
+const extra=[]; const p=+document.getElementById('m_papas').value;
+extra.push(document.getElementById('m_queso').value);
+['ceb','jit','lech','pep'].forEach(k=>{if(document.getElementById('m_s'+k).checked)extra.push('Sin '+({ceb:'cebolla',jit:'jitomate',lech:'lechuga',pep:'pepinillos'}[k]));});
+addConfigured('Hamburguesa '+pending.name,pending.base+p,extra.join(', ')+(p?' · Con papas':' · Sin papas'));closeModal();
+}
+
+function customWings(n,base){customSauce('Alitas '+n+' piezas',base);}
+function customBone(n,base){customSauce('Boneless '+n+' piezas',base);}
+function customSauce(name,base){
+pending={name,base};
+document.getElementById('modal').innerHTML=`
+<h2>🍗 ${esc(name)}</h2><p>Elige cómo las quieres.</p>
+<label><b>Salsa</b></label><select class="select" id="m_salsa"><option>BBQ Tamarindo</option><option>BBQ Hot</option><option>Buffalo</option><option>Mango Habanero</option></select>
+<label><b>Papas</b></label><select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
+<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmSauce()">Agregar</button></div>`;
+showModal();
+}
+function confirmSauce(){const p=+document.getElementById('m_papas').value;const s=document.getElementById('m_salsa').value;addConfigured(pending.name,pending.base+p,`Salsa: ${s}${p?' · Con papas':' · Sin papas'}`);closeModal();}
+
+function customBurrito(name,base){
+pending={name,base};
+document.getElementById('modal').innerHTML=`
+<h2>🌯 Burrito ${esc(name)}</h2><p>Elige tu presentación.</p>
+<select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
+<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmBurrito()">Agregar</button></div>`;
+showModal();
+}
+function confirmBurrito(){const p=+document.getElementById('m_papas').value;addConfigured('Burrito '+pending.name,pending.base+p,p?'Con papas':'Sin papas');closeModal();}
+
+function customFrappe(name,base){
+pending={name,base};
+document.getElementById('modal').innerHTML=`
+<h2>🥤 Frappé ${esc(name)}</h2><p>Elige tu leche.</p>
+<select class="select" id="m_leche"><option value="0">Leche entera — $${base}</option><option value="5">Leche deslactosada — $${base+5}</option></select>
+<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmFrappe()">Agregar</button></div>`;
+showModal();
+}
+function confirmFrappe(){const sel=document.getElementById('m_leche');const p=+sel.value;addConfigured('Frappé '+pending.name,pending.base+p,sel.options[sel.selectedIndex].text.split(' — ')[0]);closeModal();}
+
+function showModal(){document.getElementById('modalback').classList.add('show')}
+function closeModal(){document.getElementById('modalback').classList.remove('show');pending=null}
+
+function plus(i){cart[i].qty++;render()}
+function minus(i){cart[i].qty--;if(cart[i].qty<=0)cart.splice(i,1);render()}
+function removeLine(i){cart.splice(i,1);render()}
+
+function render(){
+const itemCount=cart.reduce((s,x)=>s+x.qty,0);document.getElementById('count').textContent=itemCount;const mc=document.getElementById('mobileCount');if(mc)mc.textContent=itemCount;
+const el=document.getElementById('cart');
+if(!cart.length){el.innerHTML='<div class="cart-empty">Tu pedido está vacío.<br>¡Vamos a llenarlo! 🍔</div>';}
+else el.innerHTML=cart.map((x,i)=>`
+<div class="line"><div class="line-main"><strong>${esc(x.name)}</strong><strong>$${x.price*x.qty}</strong></div>
+${x.extra?`<div class="line-extra">${esc(x.extra)}</div>`:''}
+<div class="qty"><button onclick="minus(${i})">−</button><span>${x.qty}</span><button onclick="plus(${i})">+</button><button class="del" onclick="removeLine(${i})">🗑️</button></div></div>`).join('');
+document.getElementById('total').textContent='$'+cart.reduce((s,x)=>s+x.price*x.qty,0);
+}
+
+function buildOrder(){
+  const direccion=document.getElementById('direccion').value.trim();
+  if(!cart.length){alert('Agrega al menos un producto.');return null}
+  if(!direccion){alert('Por favor escribe tu dirección.');return null}
+  const nombre=document.getElementById('nombre').value.trim()||'Cliente';
+  const pago=document.getElementById('pago').value;
+  const notas=document.getElementById('notas').value.trim();
+  const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
+  const orderNo=String(Date.now()).slice(-5);
+  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
+  return {direccion,nombre,pago,notas,total,orderNo,date};
+}
+
+function makeMessage(o){
+  let msg='*NUEVO PEDIDO - LA PARADA*\n';
+  msg+=`Pedido #${o.orderNo}\n\n`;
+  msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
+  cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\n  _'+x.extra+'_':''}\n`);
+  msg+=`\n*TOTAL: $${o.total}*`;
+  if(o.notas)msg+=`\n\n*Notas:* ${o.notas}`;
+  msg+='\n\n_Enviado desde la página de La Parada_';
+  return msg;
+}
+
+function showReceipt(){
+  const o=buildOrder(); if(!o)return;
+  let lines=cart.map(x=>`
+    <div class="receipt-item">
+      <div class="receipt-item-title"><span>${x.qty}</span><span>${esc(x.name)}</span><span>$${x.price*x.qty}</span></div>
+      ${x.extra?`<div class="receipt-extra">${esc(x.extra)}</div>`:''}
+    </div>`).join('');
+  document.getElementById('receiptPaper').innerHTML=`
+    <div class="receipt-brand">LA PARADA</div>
+    <div class="receipt-center">HAMBURGUESAS · BURRITOS · ALITAS<br>Pedido #${o.orderNo}<br>${o.date}</div>
+    <hr class="receipt-rule">
+    <div class="receipt-data"><b>CLIENTE:</b> ${esc(o.nombre)}<br><b>DIRECCIÓN:</b> ${esc(o.direccion)}<br><b>PAGO:</b> ${esc(o.pago)}</div>
+    <hr class="receipt-rule">
+    <div class="receipt-head"><span>CANT.</span><span>PRODUCTO</span><span>PRECIO</span></div>
+    ${lines}
+    <div class="receipt-total"><span>TOTAL</span><span>$${o.total}</span></div>
+    ${o.notas?`<div class="receipt-data"><b>NOTAS:</b><br>${esc(o.notas)}</div><hr class="receipt-rule">`:''}
+    <div class="receipt-thanks">¡GRACIAS POR TU PEDIDO!<br>TE ESPERAMOS<br>🫏</div>
+  `;
+  document.getElementById('receiptBack').classList.add('show');
+}
+
+function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
+function sendWA(){showReceipt()}
+
+function sendReceiptText(){
+  const o=buildOrder(); if(!o)return;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(o))}`,'_blank');
+}
+
+function receiptSvg(o){
+  const escSvg=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  const width=800;
+  let y=165;
+  let items='';
+  cart.forEach(x=>{
+    const title=escSvg(`${x.qty}  ${x.name}`);
+    items+=`<text x="50" y="${y}" class="item">${title}</text><text x="750" y="${y}" text-anchor="end" class="item">$${x.price*x.qty}</text>`;
+    y+=34;
+    if(x.extra){items+=`<text x="78" y="${y}" class="extra">${escSvg(x.extra)}</text>`;y+=28;}
+    y+=10;
+    items+=`<line x1="45" y1="${y}" x2="755" y2="${y}" class="dash"/>`;y+=28;
+  });
+  const notes=o.notas?`<text x="50" y="${y}" class="label">NOTAS</text><text x="50" y="${y+27}" class="extra">${escSvg(o.notas)}</text>`:'';
+  if(o.notas)y+=60;
+  const totalY=y+20;
+  const height=totalY+190;
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
+  <rect width="100%" height="100%" fill="#f7f7f7"/>
+  <rect x="25" y="20" width="750" height="${height-40}" rx="4" fill="#fff"/>
+  <text x="400" y="78" text-anchor="middle" class="brand">LA PARADA</text>
+  <text x="400" y="108" text-anchor="middle" class="center">HAMBURGUESAS · BURRITOS · ALITAS</text>
+  <text x="400" y="132" text-anchor="middle" class="center">PEDIDO #${escSvg(o.orderNo)} · ${escSvg(o.date)}</text>
+  <line x1="45" y1="145" x2="755" y2="145" class="dash"/>
+  ${items}
+  <line x1="45" y1="${totalY-5}" x2="755" y2="${totalY-5}" class="dash"/>
+  <text x="50" y="${totalY+35}" class="total">TOTAL</text><text x="750" y="${totalY+35}" text-anchor="end" class="total">$${o.total}</text>
+  <text x="50" y="${totalY+75}" class="label">CLIENTE: ${escSvg(o.nombre)}</text>
+  <text x="50" y="${totalY+100}" class="label">PAGO: ${escSvg(o.pago)}</text>
+  <text x="50" y="${totalY+125}" class="label">DIRECCIÓN: ${escSvg(o.direccion)}</text>
+  ${notes}
+  <text x="400" y="${height-70}" text-anchor="middle" class="thanks">¡GRACIAS POR TU PEDIDO!</text>
+  <text x="400" y="${height-45}" text-anchor="middle" class="thanks">LA PARADA · 56 3695 1217</text>
+  <style>
+    .brand{font:900 42px 'Courier New',monospace;letter-spacing:5px;fill:#111}
+    .center{font:700 18px 'Courier New',monospace;fill:#222}
+    .item{font:700 20px 'Courier New',monospace;fill:#111}
+    .extra{font:18px 'Courier New',monospace;fill:#555}
+    .label{font:700 17px 'Courier New',monospace;fill:#222}
+    .total{font:900 29px 'Courier New',monospace;fill:#111}
+    .thanks{font:900 19px 'Courier New',monospace;fill:#111}
+    .dash{stroke:#222;stroke-width:2;stroke-dasharray:9 8}
+  </style>
+</svg>`;
+}
+
+async function makeReceiptFile(){
+  const o=buildOrder(); if(!o)return null;
+  const svg=receiptSvg(o);
+  const blob=new Blob([svg],{type:'image/svg+xml;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  try{
+    const img=new Image();
+    await new Promise((resolve,reject)=>{img.onload=resolve;img.onerror=reject;img.src=url});
+    const canvas=document.createElement('canvas');
+    canvas.width=800; canvas.height=img.naturalHeight;
+    const ctx=canvas.getContext('2d');
+    ctx.fillStyle='#f7f7f7';ctx.fillRect(0,0,canvas.width,canvas.height);
+    ctx.drawImage(img,0,0);
+    const png=await new Promise(resolve=>canvas.toBlob(resolve,'image/png',1));
+    return {file:new File([png],`La-Parada-Pedido-${o.orderNo}.png`,{type:'image/png'}),order:o};
+  } finally {URL.revokeObjectURL(url);}
+}
+
+async function shareReceiptImage(){
+  try{
+    const result=await makeReceiptFile(); if(!result)return;
+    const {file,order}=result;
+    if(navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({
+        files:[file],
+        title:`Pedido #${order.orderNo} - La Parada`,
+        text:`Pedido #${order.orderNo} - La Parada · WhatsApp +52 56 3695 1217`
+      });
+    }else{
+      window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(order))}`,'_blank');
+      alert('Tu navegador no permite adjuntar la imagen automáticamente. WhatsApp se abrió con el pedido en texto.');
+    }
+  }catch(e){
+    if(e && e.name!=='AbortError') alert('No se pudo abrir el menú de compartir. Intenta de nuevo.');
+  }
+}
+
+
+render();
 
 const categoryTrack=document.getElementById('categoryTrack');
-const categorySections=categoryTrack ? [...categoryTrack.querySelectorAll(':scope > .section')] : [];
-const categoryTabs=[...document.querySelectorAll('.cats .cat')];
-
-function syncCategoryTab(){
-  if(!categoryTrack || !categorySections.length) return;
-  const center=categoryTrack.scrollLeft + categoryTrack.clientWidth/2;
-  let active=0, best=Infinity;
-  categorySections.forEach((section,i)=>{
-    const distance=Math.abs((section.offsetLeft+section.offsetWidth/2)-center);
-    if(distance<best){best=distance;active=i;}
-  });
-  categoryTabs.forEach((tab,i)=>tab.classList.toggle('active',i===active));
-  const activeTab=categoryTabs[active];
-  if(activeTab) activeTab.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+const categorySections=categoryTrack?[...categoryTrack.querySelectorAll(':scope > .section')]:[];
+const categoryButtons=[...document.querySelectorAll('.cat')];
+if(categoryTrack && categorySections.length){
+  const syncCategory=()=>{
+    const center=categoryTrack.scrollLeft+categoryTrack.clientWidth/2;
+    let best=0,dist=Infinity;
+    categorySections.forEach((s,i)=>{
+      const d=Math.abs((s.offsetLeft+s.offsetWidth/2)-center);
+      if(d<dist){dist=d;best=i;}
+    });
+    categoryButtons.forEach((btn,i)=>btn.classList.toggle('active',i===best));
+  };
+  categoryTrack.addEventListener('scroll',()=>requestAnimationFrame(syncCategory),{passive:true});
+  window.addEventListener('resize',syncCategory);
+  syncCategory();
 }
 
-if(categoryTrack){
-  categoryTrack.addEventListener('scroll',()=>requestAnimationFrame(syncCategoryTab),{passive:true});
-  window.addEventListener('resize',syncCategoryTab);
-  window.addEventListener('load',syncCategoryTab);
-}
+</script>
+
+<script>
+(function(){
+  const track=document.getElementById('categoryTrack');
+  const sections=track?[...track.querySelectorAll(':scope > .section')]:[];
+  const tabs=[...document.querySelectorAll('.cats .cat')];
+
+  function syncTabs(){
+    if(!track||!sections.length||!tabs.length) return;
+    const center=track.scrollLeft+track.clientWidth/2;
+    let active=0,best=Infinity;
+    sections.forEach((s,i)=>{
+      const d=Math.abs((s.offsetLeft+s.offsetWidth/2)-center);
+      if(d<best){best=d;active=i;}
+    });
+    tabs.forEach((tab,i)=>tab.classList.toggle('active',i===active));
+    tabs[active]?.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});
+  }
+
+  window.syncCategoryTabs=syncTabs;
+  if(track){
+    track.addEventListener('scroll',()=>requestAnimationFrame(syncTabs),{passive:true});
+    window.addEventListener('resize',syncTabs);
+    window.addEventListener('load',syncTabs);
+  }
+})();
 </script>
 
 </body>
