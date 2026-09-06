@@ -552,6 +552,66 @@ input:focus,select:focus,textarea:focus{
 }
 </style>
 
+
+<style>
+/* V12 — presentación de papas reflejada correctamente en total y ticket */
+#modal .lp-v11-option:has(#lpV11Fries:checked){
+  border-color:#F86103!important;
+  background:rgba(248,97,3,.08)!important;
+}
+#modal #lpV11Fries:checked + span::after{
+  content:"  ✓";
+  color:#F86103;
+  font-weight:950;
+}
+</style>
+
+
+<style>
+/* Pin de Google Maps para pedidos */
+.address-box{margin:5px 0 8px}
+.address-box label{display:block;color:#59381D;font-size:13px;margin:4px 0}
+.pin-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+.pin-btn{
+  border:1px solid #DCCAB2;background:#fff;color:#21130B;
+  border-radius:10px;padding:10px 8px;font-size:11px;font-weight:900;
+}
+.pin-btn:first-child{border-color:#F86103;color:#F86103}
+.pin-box{
+  margin-top:8px;padding:10px;border-radius:12px;
+  background:#FFF4EA;border:1px solid #E2AC62;
+}
+.pin-box label{font-size:11px}
+.pin-box input{margin:4px 0!important}
+.pin-box small{display:block;color:#75685c;font-size:10px;line-height:1.35}
+.pin-save{
+  margin-top:7px;border:0;border-radius:9px;padding:9px 12px;
+  background:#F86103;color:#fff;font-weight:900;font-size:11px;
+}
+.pin-status{min-height:16px;margin-top:5px;font-size:10px;color:#75685c}
+.pin-status.ok{color:#718C25;font-weight:900}
+.receipt-pin{
+  margin-top:6px;padding:7px 8px;background:#FFF4EA;
+  border-left:3px solid #F86103;font-size:10px;
+}
+.receipt-pin a{color:#F86103;font-weight:900;text-decoration:none}
+@media(max-width:600px){
+  .pin-actions{grid-template-columns:1fr}
+}
+</style>
+
+
+<style>
+/* Hot Dogs — modificadores */
+#modal input[name="lpHotPresentation"]{accent-color:#F86103}
+</style>
+
+
+<style>
+/* V13 — Alitas y Boneless */
+#modal input[name="lpChickenSauce"]{accent-color:#F86103}
+</style>
+
 </head>
 <body>
 
@@ -634,7 +694,7 @@ input:focus,select:focus,textarea:focus{
 <div class="section-title"><h2>⭐ Los favoritos</h2><p>Para empezar</p></div>
 <div class="grid">
 <article class="card recommended"><span class="tag">⭐ RECOMENDADO</span><div class="card-top"><h3>🍔 Arrachera</h3><span class="price">$110</span></div><p class="desc">Arrachera, queso Monterrey, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup, mostaza y guacamole.</p><button class="add" onclick="customBurger('Arrachera',110)">Personalizar y agregar</button></article>
-<article class="card recommended"><span class="tag">🔥 FAVORITO</span><div class="card-top"><h3>🍗 Alitas 12</h3><span class="price">$135</span></div><p class="desc">12 piezas. Elige tu salsa y si las quieres con papas (+$15).</p><button class="add" onclick="customWings(12,135)">Personalizar y agregar</button></article>
+<article class="card recommended"><span class="tag">🔥 FAVORITO</span><div class="card-top"><h3>🍗 Alitas 12</h3><span class="price">$135</span></div><p class="desc">12 piezas. Elige tu salsa y si las quieres con papas (+$15).</p><button class="add" onclick="customWingsV13(12,135)">Personalizar y agregar</button></article>
 <article class="card recommended"><span class="tag">🌯 PARA COMPARTIR</span><div class="card-top"><h3>Burrito Arrachera</h3><span class="price">$95</span></div><p class="desc">Arrachera, queso Oaxaca, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Arrachera',95)">Personalizar y agregar</button></article>
 </div>
 </section>
@@ -643,7 +703,7 @@ input:focus,select:focus,textarea:focus{
 <div class="section-title"><h2>🍔 Hamburguesas</h2><p>Res y pollo</p></div>
 <div class="grid">
 <article class="card"><div class="card-top"><h3>Sencilla</h3><span class="price">$60</span></div><p class="desc">Carne, queso americano u Oaxaca, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup y mostaza.</p><button class="add" onclick="customBurger('Sencilla',60)">Personalizar y agregar</button></article>
-<article class="card"><div class="card-top"><h3>Hawaiana</h3><span class="price">$80</span></div><p class="desc">Carne, piña, jamón, tocino, queso americano u Oaxaca, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup y mostaza.</p><button class="add" onclick="customBurger('Hawaiana',80)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Hawaiana</h3><span class="price">$80</span></div><p class="desc">Carne, jamón, tocino, queso amarillo, pepinillos, lechuga, jitomate, cebolla, chiles, cátsup y mostaza.</p><button class="add" onclick="customBurger('Hawaiana',80)">Personalizar y agregar</button></article>
 <article class="card"><div class="card-top"><h3>Doble carne</h3><span class="price">$90</span></div><p class="desc">Doble carne, tocino, queso americano u Oaxaca, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup y mostaza.</p><button class="add" onclick="customBurger('Doble carne',90)">Personalizar y agregar</button></article>
 <article class="card"><div class="card-top"><h3>Arrachera</h3><span class="price">$110</span></div><p class="desc">Arrachera, queso Monterrey, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup, mostaza y guacamole.</p><button class="add" onclick="customBurger('Arrachera',110)">Personalizar y agregar</button></article>
 </div><p class="note">* Con papas: +$15.</p>
@@ -662,26 +722,26 @@ input:focus,select:focus,textarea:focus{
 <section class="section" id="alitas">
 <div class="section-title"><h2>🍗 Alitas</h2><p>Salsa + papas</p></div>
 <div class="grid">
-<article class="card"><div class="card-top"><h3>8 piezas</h3><span class="price">$90</span></div><p class="desc">8 piezas. Con papas: $105.</p><button class="add" onclick="customWings(8,90)">Personalizar y agregar</button></article>
-<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$135</span></div><p class="desc">12 piezas. Con papas: $150.</p><button class="add" onclick="customWings(12,135)">Personalizar y agregar</button></article>
-<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$190</span></div><p class="desc">18 piezas. Con papas: $205.</p><button class="add" onclick="customWings(18,190)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>8 piezas</h3><span class="price">$90</span></div><p class="desc">8 piezas. Con papas: $105.</p><button class="add" onclick="customWingsV13(8,90)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$135</span></div><p class="desc">12 piezas. Con papas: $150.</p><button class="add" onclick="customWingsV13(12,135)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$190</span></div><p class="desc">18 piezas. Con papas: $205.</p><button class="add" onclick="customWingsV13(18,190)">Personalizar y agregar</button></article>
 </div>
 </section>
 
 <section class="section" id="boneless">
 <div class="section-title"><h2>🍗 Boneless</h2><p>Salsa + papas</p></div>
 <div class="grid">
-<article class="card"><div class="card-top"><h3>6 piezas</h3><span class="price">$80</span></div><p class="desc">6 piezas. Con papas: $95.</p><button class="add" onclick="customBone(6,80)">Personalizar y agregar</button></article>
-<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$155</span></div><p class="desc">12 piezas. Con papas: $170.</p><button class="add" onclick="customBone(12,155)">Personalizar y agregar</button></article>
-<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$230</span></div><p class="desc">18 piezas. Con papas: $245.</p><button class="add" onclick="customBone(18,230)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>6 piezas</h3><span class="price">$80</span></div><p class="desc">6 piezas. Con papas: $95.</p><button class="add" onclick="customBonelessV13(6,80)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$155</span></div><p class="desc">12 piezas. Con papas: $170.</p><button class="add" onclick="customBonelessV13(12,155)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$230</span></div><p class="desc">18 piezas. Con papas: $245.</p><button class="add" onclick="customBonelessV13(18,230)">Personalizar y agregar</button></article>
 </div>
 </section>
 
 <section class="section" id="hotdogs">
 <div class="section-title"><h2>🌭 Hot Dogs</h2><p>Solo / con papas</p></div>
 <div class="grid">
-<article class="card"><div class="card-top"><h3>Sencillo</h3><span class="price">$25</span></div><p class="desc">Salchicha, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="addSimple('Hot Dog Sencillo',25)">Agregar</button></article>
-<article class="card"><div class="card-top"><h3>Especial</h3><span class="price">$30</span></div><p class="desc">Salchicha, tocino, queso Oaxaca, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="addSimple('Hot Dog Especial',30)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Sencillo</h3><span class="price">$25</span></div><p class="desc">Salchicha, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="customHotDog('Sencillo',25,35)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Especial</h3><span class="price">$30</span></div><p class="desc">Salchicha, tocino, queso Oaxaca, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="customHotDog('Especial',30,40)">Personalizar y agregar</button></article>
 </div><p class="note">* Con papas: $35 sencillo / $40 especial.</p>
 </section>
 
@@ -737,7 +797,21 @@ input:focus,select:focus,textarea:focus{
 <div class="total"><span>Total</span><span id="total">$0</span></div>
 <div class="form"><h3>Datos de entrega</h3>
 <input id="nombre" placeholder="Tu nombre">
-<input id="direccion" placeholder="Dirección / colonia *">
+<div class="address-box">
+  <label for="direccion"><b>📍 Dirección de entrega</b></label>
+  <input id="direccion" placeholder="Calle, número, colonia *" autocomplete="street-address">
+  <div class="pin-actions">
+    <button type="button" class="pin-btn" onclick="useMyLocation()">📍 Usar mi ubicación</button>
+    <button type="button" class="pin-btn secondary-pin" onclick="showPinHelp()">🗺️ Agregar pin de Google</button>
+  </div>
+  <div id="pinBox" class="pin-box" hidden>
+    <label for="googlePin">Pega aquí el enlace del pin de Google Maps</label>
+    <input id="googlePin" type="url" inputmode="url" placeholder="https://maps.app.goo.gl/..." autocomplete="off">
+    <small>En Google Maps: coloca el pin → Compartir → Copiar enlace → pégalo aquí.</small>
+    <button type="button" class="pin-save" onclick="saveGooglePin()">✓ Guardar pin</button>
+  </div>
+  <div id="pinStatus" class="pin-status"></div>
+</div>
 <select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta al entregar</option></select>
 <textarea id="notas" rows="3" placeholder="Notas del pedido"></textarea>
 <button class="order" onclick="sendWA()">🧾 Revisar pedido / recibo</button>
@@ -751,7 +825,6 @@ input:focus,select:focus,textarea:focus{
 <nav class="mobile-nav" aria-label="Navegación móvil">
   <button class="active" onclick="go('recomendados')"><span>⌂</span>Inicio</button>
   <button onclick="go('hamburguesas')"><span>🍔</span>Menú</button>
-  <button onclick="openCart()"><span>🛒<i class="nav-cart-badge" id="mobileCount">0</i></span>Carrito</button>
   <button onclick="go('ubicacion')"><span>📍</span>Ubicación</button>
 </nav>
 
@@ -794,8 +867,8 @@ function filterMenu(q){
   });
 }
 
-function addSimple(name,price){cart.push({name,price,qty:1,extra:''});render();openCart();}
-function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});render();openCart();}
+function addSimple(name,price){cart.push({name,price,qty:1,extra:''});render();}
+function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});render();}
 
 
 const LP_BURGERS = {
@@ -857,12 +930,134 @@ function lpModifierShell(title, subtitle, body, base){
 
 function lpUpdateTotal(base){
   let total=Number(base||0);
-  document.querySelectorAll('#modal input[data-price]:checked').forEach(x=>total+=Number(x.dataset.price||0));
-  const fries=document.getElementById('lpV11Fries');
-  if(fries && fries.checked) total+=15;
+  document.querySelectorAll('#modal input[data-price]:checked')
+    .forEach(x=>total+=Number(x.dataset.price||0));
   const el=document.getElementById('lpV11Total');
   if(el) el.textContent='$'+total;
   return total;
+}
+
+
+
+const LP_SAUCES = ["BBQ","BBQ Hot","Tamarindo","Búfalo","Mango Habanero"];
+
+function lpSaucePrice(total){
+  return Number(total||0);
+}
+
+function customWingsV13(pieces,base){
+  const solo=Number(base||0);
+  const conPapas=solo+15;
+  pending={type:"wings",name:`Alitas ${pieces} piezas`,solo,conPapas};
+
+  const body=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍗</span><div>
+        <b>Presentación</b><small>Elige cómo quieres tus alitas</small>
+      </div></div>
+      ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
+      ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🌶️</span><div>
+        <b>Salsa</b><small>Elige una salsa</small>
+      </div></div>
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
+    </section>`;
+
+  lpModifierShell(`🍗 Alitas ${pieces} piezas`,"Personaliza tu orden.",body,solo);
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
+    const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
+    const total=Number(p?.dataset.price||solo);
+    document.getElementById('lpV11Total').textContent='$'+total;
+  }));
+  document.getElementById('lpV11Confirm').onclick=confirmChickenV13;
+}
+
+function customBonelessV13(pieces,base){
+  const solo=Number(base||0);
+  const conPapas=solo+15;
+  pending={type:"boneless",name:`Boneless ${pieces} piezas`,solo,conPapas};
+
+  const body=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍗</span><div>
+        <b>Presentación</b><small>Elige cómo quieres tus boneless</small>
+      </div></div>
+      ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
+      ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🌶️</span><div>
+        <b>Salsa</b><small>Elige una salsa</small>
+      </div></div>
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
+    </section>`;
+
+  lpModifierShell(`🍗 Boneless ${pieces} piezas`,"Personaliza tu orden.",body,solo);
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
+    const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
+    const total=Number(p?.dataset.price||solo);
+    document.getElementById('lpV11Total').textContent='$'+total;
+  }));
+  document.getElementById('lpV11Confirm').onclick=confirmChickenV13;
+}
+
+function confirmChickenV13(){
+  if(!pending) return;
+  const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
+  const sauce=document.querySelector('#modal input[name="lpChickenSauce"]:checked');
+  if(!p || !sauce){ alert('Selecciona la presentación y la salsa.'); return; }
+  const conPapas=p.value==="papas";
+  const price=Number(p.dataset.price||pending.solo);
+  const extra=conPapas?`Con papas (+$${pending.conPapas-pending.solo})`:"Solo";
+  const details=`Presentación: ${extra} · Salsa: ${sauce.value}`;
+  addConfigured(pending.name,price,details);
+  closeModal();
+}
+
+function customHotDog(name,solo,conPapas){
+  pending={type:"hotdog",name,solo,conPapas};
+  const ingredients=["Cebolla","Jitomate","Mayonesa","Catsup","Mostaza","Chiles"];
+
+  const body=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🌭</span><div>
+        <b>Presentación</b><small>Elige cómo quieres tu Hot Dog</small>
+      </div></div>
+      ${lpOption("Solo","lpHotPresentation",true,"radio",String(solo))}
+      ${lpOption("Con papas","lpHotPresentation",false,"radio",String(conPapas))}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🥬</span><div>
+        <b>Ingredientes</b><small>Desmarca lo que no quieras</small>
+      </div></div>
+      ${ingredients.map(x=>lpOption(x,"lpHotIngredient",true)).join("")}
+    </section>`;
+
+  lpModifierShell(`🌭 Hot Dog ${name}`,"Personaliza tu Hot Dog.",body,solo);
+  document.querySelectorAll('#modal input').forEach(x=>{
+    x.addEventListener('change',()=>{
+      const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
+      const total=Number(presentation?.dataset.price||solo);
+      const el=document.getElementById('lpV11Total');
+      if(el) el.textContent='$'+total;
+    });
+  });
+  document.getElementById('lpV11Confirm').onclick=()=>confirmHotDog();
+}
+
+function confirmHotDog(){
+  const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
+  const conPapas=presentation?.value==="papas";
+  const price=Number(presentation?.dataset.price||pending.solo);
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpHotIngredient"]:checked')].map(x=>x.value);
+  const details=[
+    conPapas?"Presentación: Con papas (+$"+(pending.conPapas-pending.solo)+")":"Presentación: Solo",
+    "Ingredientes: "+(ingredients.length?ingredients.join(", "):"ninguno")
+  ].join(" · ");
+  addConfigured("Hot Dog "+pending.name,price,details);
+  closeModal();
 }
 
 function customBurger(name,base){
@@ -917,7 +1112,7 @@ function confirmBurgerV11(){
     `Ingredientes: ${ingredients.length?ingredients.join(", "):"ninguno"}`,
     included.length?`Incluye: ${included.join(", ")}`:"",
     extras.length?`Extras: ${extras.join(", ")}`:"",
-    fries?"Con papas (+$15)":"Sin papas"
+    fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
   ].filter(Boolean).join(" · ");
   addConfigured("Hamburguesa "+pending.name,total,details);
   closeModal();
@@ -949,7 +1144,7 @@ function confirmBurritoV11(){
   const fries=document.getElementById('lpV11Fries')?.checked;
   const details=[
     ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Sin ingredientes",
-    fries?"Con papas (+$15)":"Sin papas"
+    fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
   ].join(" · ");
   addConfigured("Burrito "+pending.name,total,details);
   closeModal();
@@ -993,13 +1188,17 @@ function buildOrder(){
   const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
   const orderNo=String(Date.now()).slice(-5);
   const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
-  return {direccion,nombre,pago,notas,total,orderNo,date};
+  const googlePin=(document.getElementById('googlePin')?.value||'').trim();
+   const pinLabel=document.getElementById('pinStatus')?.textContent||'';
+   return {direccion,nombre,pago,notas,total,orderNo,date,googlePin,pinLabel};
 }
 
 function makeMessage(o){
   let msg='*NUEVO PEDIDO - LA PARADA*\n';
   msg+=`Pedido #${o.orderNo}\n\n`;
-  msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
+  msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n`;
+   if(o.googlePin) msg+=`*📍 Pin Google Maps:* ${o.googlePin}\n`;
+   msg+=`*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
   cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\n  _'+x.extra+'_':''}\n`);
   msg+=`\n*TOTAL: $${o.total}*`;
   if(o.notas)msg+=`\n\n*Notas:* ${o.notas}`;
@@ -1030,6 +1229,56 @@ function showReceipt(){
 }
 
 function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
+
+function showPinHelp(){
+  const box=document.getElementById('pinBox');
+  if(box) box.hidden=!box.hidden;
+  if(!box.hidden) document.getElementById('googlePin')?.focus();
+}
+
+function saveGooglePin(){
+  const input=document.getElementById('googlePin');
+  const status=document.getElementById('pinStatus');
+  const value=(input?.value||'').trim();
+  if(!value){
+    if(status) status.textContent='Pega primero el enlace de tu pin.';
+    return;
+  }
+  const ok=/^(https?:\/\/)?([^\s]+\.)?google\.[^\s]+/i.test(value) || /maps\.app\.goo\.gl|maps\.google\./i.test(value);
+  if(!ok){
+    if(status) status.textContent='Ese enlace no parece ser de Google Maps.';
+    return;
+  }
+  if(status){
+    status.textContent='✓ Pin de Google Maps agregado al pedido';
+    status.classList.add('ok');
+  }
+}
+
+function useMyLocation(){
+  const status=document.getElementById('pinStatus');
+  const address=document.getElementById('direccion');
+  if(!navigator.geolocation){
+    if(status) status.textContent='Tu navegador no permite obtener la ubicación.';
+    return;
+  }
+  if(status) status.textContent='Obteniendo tu ubicación…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude.toFixed(6);
+    const lng=pos.coords.longitude.toFixed(6);
+    const url=`https://www.google.com/maps?q=${lat},${lng}`;
+    const pin=document.getElementById('googlePin');
+    if(pin) pin.value=url;
+    if(status){
+      status.textContent='✓ Ubicación agregada como pin de Google Maps';
+      status.classList.add('ok');
+    }
+    if(address && !address.value) address.value='Ubicación actual (pin en Google Maps)';
+  },()=>{
+    if(status) status.textContent='No pudimos obtener tu ubicación. Puedes pegar un pin de Google Maps.';
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
+
 function sendWA(){showReceipt()}
 
 function sendReceiptText(){
@@ -1192,6 +1441,45 @@ if(categoryTrack && categorySections.length){
       closeReceiptForNavigation();
     },{capture:true});
   });
+})();
+</script>
+
+
+<script>
+/* UX FIX — agregar producto no abre el carrito automáticamente */
+(function(){
+  function keepMenuAfterAdd(){
+    // Close only the cart drawer if an older handler opened it.
+    const drawer=document.getElementById('drawer');
+    const back=document.getElementById('back');
+    if(drawer) drawer.classList.remove('show','open');
+    if(back) back.classList.remove('show','open');
+    document.body.classList.remove('cart-open','drawer-open');
+  }
+
+  // Existing inline add handlers run before this listener in some browsers.
+  // Use a delegated listener after click to guarantee the menu remains usable.
+  document.addEventListener('click', function(e){
+    const btn=e.target.closest('.add');
+    if(!btn) return;
+    setTimeout(keepMenuAfterAdd, 0);
+  }, false);
+
+  // Keep bottom navigation above the cart/backdrop and clickable.
+  const style=document.createElement('style');
+  style.textContent=`
+    .mobile-nav{
+      position:fixed!important;
+      z-index:10000!important;
+      pointer-events:auto!important;
+    }
+    .mobile-nav button{
+      pointer-events:auto!important;
+      position:relative;
+      z-index:10001!important;
+    }
+  `;
+  document.head.appendChild(style);
 })();
 </script>
 
