@@ -292,6 +292,174 @@ main{background:var(--cream)}
  .cats{position:sticky!important;top:64px!important;z-index:40!important}
 }
 
+
+/* =========================================
+   LA PARADA — IDENTIDAD VISUAL OFICIAL
+   Street food mexicana/latina + casual-premium
+   ========================================= */
+:root{
+  --lp-orange:#F86103;
+  --lp-bbq:#59381D;
+  --lp-charcoal:#21130B;
+  --lp-gold:#D28521;
+  --lp-caramel:#E2AC62;
+  --lp-cream:#DCCAB2;
+  --lp-ivory:#F8F7F6;
+  --lp-avocado:#718C25;
+  --o:#F86103;
+  --c:#F8F7F6;
+  --ink:#21130B;
+  --muted:#75685c;
+  --line:#eadfd2;
+}
+
+html{background:var(--lp-ivory)}
+body{
+  background:var(--lp-ivory)!important;
+  color:var(--lp-charcoal)!important;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+.header{
+  background:var(--lp-charcoal)!important;
+  color:var(--lp-ivory)!important;
+  border-bottom:1px solid rgba(226,172,98,.18)!important;
+}
+.brand,.brand *{color:var(--lp-ivory)!important}
+.cart-btn{
+  background:var(--lp-orange)!important;
+  color:#fff!important;
+  border:0!important;
+}
+.hero{
+  background:
+    linear-gradient(90deg,rgba(33,19,11,.94),rgba(33,19,11,.68) 48%,rgba(33,19,11,.32)),
+    radial-gradient(circle at 78% 28%,rgba(248,97,3,.34),transparent 30%),
+    var(--lp-charcoal)!important;
+}
+.hero h1,.hero h2,.hero p,.hero .eyebrow{color:#fff!important}
+.hero h1 span{color:var(--lp-orange)!important}
+.primary,.add,.promo a{
+  background:var(--lp-orange)!important;
+  color:#fff!important;
+}
+.secondary{
+  background:var(--lp-ivory)!important;
+  color:var(--lp-charcoal)!important;
+}
+.hero-meta span{
+  background:rgba(248,247,246,.09)!important;
+  border-color:rgba(226,172,98,.25)!important;
+  color:var(--lp-ivory)!important;
+}
+.hero-glow{background:rgba(248,97,3,.28)!important}
+.floating-card{
+  background:var(--lp-ivory)!important;
+  color:var(--lp-charcoal)!important;
+  border:1px solid rgba(210,133,33,.22)!important;
+}
+.order-choices{
+  background:transparent!important;
+}
+.order-choices button,.order-choices a{
+  background:var(--lp-ivory)!important;
+  color:var(--lp-charcoal)!important;
+  border:1px solid var(--lp-cream)!important;
+}
+.choice-icon{
+  background:rgba(248,97,3,.10)!important;
+  color:var(--lp-orange)!important;
+}
+.order-choices strong{color:var(--lp-orange)!important}
+.cats{
+  background:rgba(248,247,246,.97)!important;
+  border-bottom:1px solid var(--lp-cream)!important;
+}
+.cats .cat{color:var(--lp-bbq)!important}
+.cats .cat.active{color:var(--lp-charcoal)!important}
+.cats .cat.active:after{background:var(--lp-orange)!important}
+.category-hint{color:var(--muted)!important}
+.category-hint b{color:var(--lp-orange)!important}
+.promo{
+  background:linear-gradient(135deg,var(--lp-charcoal),var(--lp-bbq))!important;
+  border:1px solid rgba(210,133,33,.25)!important;
+}
+.promo-kicker{color:var(--lp-caramel)!important}
+.section-title h2,.section-title h3{
+  color:var(--lp-charcoal)!important;
+}
+.card{
+  background:var(--lp-ivory)!important;
+  border-color:var(--lp-cream)!important;
+}
+.card h3{color:var(--lp-bbq)!important}
+.card .price,.price{color:var(--lp-orange)!important}
+.card .tag,.badge{
+  background:rgba(113,140,37,.12)!important;
+  color:var(--lp-avocado)!important;
+}
+.add:hover,.primary:hover{background:#d94f00!important}
+.location{
+  background:var(--lp-charcoal)!important;
+  color:var(--lp-ivory)!important;
+  border:1px solid rgba(210,133,33,.25)!important;
+}
+.location h2,.location h3,.location strong{color:#fff!important}
+.location a{color:var(--lp-orange)!important}
+.bottom-nav{
+  background:var(--lp-charcoal)!important;
+  border-top:1px solid rgba(226,172,98,.18)!important;
+}
+.bottom-nav a{color:var(--lp-cream)!important}
+.bottom-nav a.active,.bottom-nav a:hover{color:var(--lp-orange)!important}
+.modal,.cart-panel{
+  background:var(--lp-ivory)!important;
+  color:var(--lp-charcoal)!important;
+}
+.modal .close,.cart-panel .close{color:var(--lp-charcoal)!important}
+.receipt{
+  background:#fff!important;
+  color:var(--lp-charcoal)!important;
+  border-top:5px solid var(--lp-orange)!important;
+}
+.receipt .accent,.receipt-total,.receipt-total *{color:var(--lp-orange)!important}
+.whatsapp,.wa-btn{
+  background:#25d366!important;
+  color:#fff!important;
+}
+.footer{
+  background:var(--lp-charcoal)!important;
+  color:var(--lp-cream)!important;
+}
+.footer a{color:var(--lp-orange)!important}
+
+/* Reduce visual noise: food photos lead, UI stays restrained. */
+img{border-radius:inherit}
+.section{background:var(--lp-ivory)!important}
+.category-track>.section>.section-title{
+  background:rgba(248,247,246,.96)!important;
+}
+
+/* Warm kraft-like micro details */
+.order-choices small,.card p,.section-title p{
+  color:var(--muted)!important;
+}
+hr{border-color:var(--lp-cream)!important}
+input,select,textarea{
+  background:#fff!important;
+  border-color:var(--lp-cream)!important;
+  color:var(--lp-charcoal)!important;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--lp-orange)!important;
+  box-shadow:0 0 0 3px rgba(248,97,3,.10)!important;
+}
+@media(max-width:600px){
+  .hero{background:
+    linear-gradient(180deg,rgba(33,19,11,.90),rgba(33,19,11,.72)),
+    var(--lp-charcoal)!important;
+  }
+}
+
 </style>
 </head>
 <body>
@@ -306,7 +474,7 @@ main{background:var(--cream)}
 <section class="hero" id="inicio">
   <div class="hero-inner">
     <div class="hero-copy">
-      <span class="eyebrow">🔥 HECHO AL MOMENTO</span>
+      <span class="eyebrow">🫏 LA PARADA · STREET FOOD</span>
       <h1>Tu antojo,<br><span>en La Parada.</span></h1>
       <p>Hamburguesas, burritos, alitas, boneless y más. Arma tu pedido en segundos.</p>
       <div class="actions">
