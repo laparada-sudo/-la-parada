@@ -403,7 +403,7 @@ body{
   color:var(--lp-ivory)!important;
   border:1px solid rgba(210,133,33,.25)!important;
 }
-.location h2,.location h3,.location strong{color:#fff!important}
+.location h2,.location h3,.location strong,.location p,.location b{color:#fff!important;opacity:1!important}
 .location a{color:var(--lp-orange)!important}
 .bottom-nav{
   background:var(--lp-charcoal)!important;
@@ -612,6 +612,14 @@ input:focus,select:focus,textarea:focus{
 #modal input[name="lpChickenSauce"]{accent-color:#F86103}
 </style>
 
+<style>
+/* FINAL VISIBILITY / NAV FIX */
+.location p,.location b{color:#fff!important;opacity:1!important;text-shadow:0 1px 1px rgba(0,0,0,.25)}
+.mobile-nav{z-index:10000!important;pointer-events:auto!important}
+.mobile-nav button{z-index:10001!important;pointer-events:auto!important}
+.drawer,.back{z-index:40!important}
+.receipt-back{z-index:70!important}
+</style>
 </head>
 <body>
 
@@ -834,6 +842,7 @@ input:focus,select:focus,textarea:focus{
     <div class="receipt-actions">
       <button class="wa-receipt" onclick="shareReceiptImage()">📲 Enviar recibo por WhatsApp</button><div style="text-align:center;font-size:11px;color:#777;margin-top:6px">Se compartirá la imagen del recibo a WhatsApp: <b>+52 56 3695 1217</b></div>
       <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
+      <button class="close-receipt" onclick="go('hamburguesas')">🍔 Volver al menú</button>
     </div>
   </div>
 </div>
@@ -847,6 +856,10 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
 function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
 function go(id){
+  // Navigation remains usable from cart and receipt.
+  try{ closeCart(); }catch(e){}
+  try{ closeReceipt(); }catch(e){}
+  try{ closeModal(); }catch(e){}
   const el=document.getElementById(id);
   if(!el) return;
   const track=document.getElementById('categoryTrack');
@@ -879,11 +892,14 @@ const LP_BURGERS = {
     extras:[["Tocino",10]]
   },
   "Hawaiana": {
-    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
+    cheeseMode:"multi",
+    cheeses:["Q amarillo","Q Oaxaca"],
+    cheeseDefaults:["Q amarillo","Q Oaxaca"],
+    defaultCheese:"Q amarillo",
     ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     included:["Jamón","Tocino"],
-    extras:[["Tocino extra",10]]
+    extras:[["Monterrey",20],["Tocino extra",10]]
   },
   "Doble carne": {
     cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
@@ -953,7 +969,7 @@ function customWingsV13(pieces,base){
   const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍗</span><div>
-        <b>Presentación</b><small>Elige cómo quieres tus alitas</small>
+        <b>Papas</b><small>Elige cómo quieres tus alitas</small>
       </div></div>
       ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
       ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
@@ -982,7 +998,7 @@ function customBonelessV13(pieces,base){
   const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍗</span><div>
-        <b>Presentación</b><small>Elige cómo quieres tus boneless</small>
+        <b>Papas</b><small>Elige cómo quieres tus boneless</small>
       </div></div>
       ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
       ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
@@ -1008,7 +1024,7 @@ function confirmChickenV13(){
   const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
   const sauce=document.querySelector('#modal input[name="lpChickenSauce"]:checked');
   if(!p || !sauce){ alert('Selecciona la presentación y la salsa.'); return; }
-  const conPapas=p.value==="papas";
+  const conPapas=p.value==="Con papas";
   const price=Number(p.dataset.price||pending.solo);
   const extra=conPapas?`Con papas (+$${pending.conPapas-pending.solo})`:"Solo";
   const details=`Presentación: ${extra} · Salsa: ${sauce.value}`;
@@ -1023,7 +1039,7 @@ function customHotDog(name,solo,conPapas){
   const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🌭</span><div>
-        <b>Presentación</b><small>Elige cómo quieres tu Hot Dog</small>
+        <b>Papas</b><small>Elige cómo quieres tu Hot Dog</small>
       </div></div>
       ${lpOption("Solo","lpHotPresentation",true,"radio",String(solo))}
       ${lpOption("Con papas","lpHotPresentation",false,"radio",String(conPapas))}
@@ -1049,7 +1065,7 @@ function customHotDog(name,solo,conPapas){
 
 function confirmHotDog(){
   const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
-  const conPapas=presentation?.value==="papas";
+  const conPapas=presentation?.value==="Con papas";
   const price=Number(presentation?.dataset.price||pending.solo);
   const ingredients=[...document.querySelectorAll('#modal input[name="lpHotIngredient"]:checked')].map(x=>x.value);
   const details=[
@@ -1066,8 +1082,14 @@ function customBurger(name,base){
   pending={type:"burger",name,base,cfg};
 
   let body = `<section class="lp-v11-section">
-    <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige una opción</small></div></div>
-    ${cfg.cheeses.map((c,i)=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
+    <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu hamburguesa con papas</small></div></div>
+    ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+  </section>
+  <section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🧀</span><div><b>${cfg.cheeseMode==="multi"?"Quesos":"Queso"}</b><small>${cfg.cheeseMode==="multi"?"Puedes mantener los quesos incluidos y agregar Monterrey":"Elige una opción"}</small></div></div>
+    ${cfg.cheeseMode==="multi"
+      ? cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",cfg.cheeseDefaults.includes(c),"checkbox")).join("")
+      : cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
   </section>`;
 
   if(cfg.included?.length){
@@ -1089,23 +1111,25 @@ function customBurger(name,base){
     </section>`;
   }
 
-  body += `<section class="lp-v11-section">
-    <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Opcional</small></div></div>
-    ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
-  </section>`;
+
 
   lpModifierShell(`🍔 ${name}`,"Personaliza tu hamburguesa como la quieres.",body,base);
   document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
   document.getElementById('lpV11Confirm').onclick=()=>confirmBurgerV11();
 }
 
+function lpFriesSelected(){
+  return !!document.querySelector('#modal input[name="lpV11Fries"]:checked');
+}
+
 function confirmBurgerV11(){
   const p=Number(pending.base||0);
-  const cheese=document.querySelector('#modal input[name="lpV11Cheese"]:checked')?.value || "";
+  const cheeseEls=[...document.querySelectorAll('#modal input[name="lpV11Cheese"]:checked')];
+  const cheese=cheeseEls.map(x=>x.value).join(", ");
   const ingredients=[...document.querySelectorAll('#modal input[name="lpV11Ingredient"]:checked')].map(x=>x.value);
   const included=[...document.querySelectorAll('#modal input[name="lpV11Included"]:checked')].map(x=>x.value);
   const extras=[...document.querySelectorAll('#modal input[name="lpV11Extra"]:checked')].map(x=>`${x.value} (+$${x.dataset.price})`);
-  const fries=document.getElementById('lpV11Fries')?.checked;
+  const fries=lpFriesSelected();
   const total=lpUpdateTotal(p);
   const details=[
     `Queso: ${cheese}`,
@@ -1125,12 +1149,12 @@ function customBurrito(name,base){
 
   const body = `
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Seleccionados por defecto · puedes quitar cualquiera</small></div></div>
-      ${ingredients.map(x=>lpOption(x,"lpV11BurritoIngredient",true)).join("")}
+      <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu burrito con papas</small></div></div>
+      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
     </section>
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🍟</span><div><b>Presentación</b><small>Elige si quieres papas</small></div></div>
-      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Seleccionados por defecto · puedes quitar cualquiera</small></div></div>
+      ${ingredients.map(x=>lpOption(x,"lpV11BurritoIngredient",true)).join("")}
     </section>`;
 
   lpModifierShell(`🌯 Burrito ${name}`,"Arma tu burrito con los ingredientes que prefieras.",body,base);
@@ -1141,7 +1165,7 @@ function customBurrito(name,base){
 function confirmBurritoV11(){
   const total=lpUpdateTotal(pending.base);
   const ingredients=[...document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]:checked')].map(x=>x.value);
-  const fries=document.getElementById('lpV11Fries')?.checked;
+  const fries=lpFriesSelected();
   const details=[
     ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Sin ingredientes",
     fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
