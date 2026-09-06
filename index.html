@@ -460,7 +460,82 @@ input:focus,select:focus,textarea:focus{
   }
 }
 
+
+/* CORRECCIÓN: navegación inferior utilizable con recibo abierto */
+.bottom-nav{
+  position:fixed!important;
+  z-index:10000!important;
+  pointer-events:auto!important;
+}
+.bottom-nav a,.bottom-nav button{
+  pointer-events:auto!important;
+  position:relative;
+  z-index:10001!important;
+}
+/* El backdrop no debe cubrir la barra inferior */
+.modal-backdrop,
+.modal-overlay{
+  z-index:9000!important;
+}
+.modal,
+.modal-content,
+.receipt-modal{
+  z-index:9500!important;
+}
+/* Si el proyecto usa un contenedor genérico de modal */
+#receiptModal,.receipt-modal-wrap{
+  z-index:9500!important;
+}
+
 </style>
+
+<style>
+/* Modificadores La Parada */
+.lp-mod-overlay{
+  position:fixed;inset:0;z-index:20000;
+  background:rgba(33,19,11,.72);
+  backdrop-filter:blur(5px);
+  display:flex;align-items:flex-end;justify-content:center;
+  padding:12px;
+}
+.lp-mod-card{
+  width:min(620px,100%);max-height:92vh;overflow:auto;
+  background:#F8F7F6;color:#21130B;border-radius:26px 26px 18px 18px;
+  box-shadow:0 30px 80px rgba(0,0,0,.35);padding:22px;
+}
+.lp-mod-close{
+  float:right;width:38px;height:38px;border:0;border-radius:50%;
+  background:#DCCAB2;color:#21130B;font-size:25px;line-height:1;
+}
+.lp-mod-kicker{font-size:11px;font-weight:950;letter-spacing:1.1px;color:#F86103}
+.lp-mod-card h2{margin:5px 42px 0 0;font-size:28px;color:#21130B}
+.lp-mod-base{margin:4px 0 15px;color:#F86103;font-weight:950;font-size:20px}
+.lp-mod-section{border-top:1px solid #DCCAB2;padding:15px 0}
+.lp-mod-section h3{font-size:16px;margin:0 0 9px;color:#59381D}
+.lp-choice{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 10px;margin:5px 0;border:1px solid #eadfd2;
+  border-radius:13px;background:#fff;cursor:pointer;
+}
+.lp-choice input{accent-color:#F86103;width:18px;height:18px}
+.lp-choice span{flex:1}
+.lp-choice b{color:#F86103}
+.lp-default-note{
+  background:#E2AC62;color:#21130B;border-radius:10px;
+  padding:8px 10px;font-size:12px;font-weight:800;margin-top:8px;
+}
+.lp-mod-total{
+  display:flex;justify-content:space-between;align-items:center;
+  border-top:2px dashed #DCCAB2;padding:15px 0 10px;font-weight:900;
+}
+.lp-mod-total strong{color:#F86103;font-size:23px}
+.lp-mod-add{
+  width:100%;border:0;border-radius:14px;padding:15px;
+  background:#F86103;color:#fff;font-size:16px;font-weight:950;
+}
+.lp-mod-add:active{transform:scale(.99)}
+</style>
+
 </head>
 <body>
 
@@ -962,6 +1037,245 @@ if(categoryTrack && categorySections.length){
     window.addEventListener('resize',syncTabs);
     window.addEventListener('load',syncTabs);
   }
+})();
+</script>
+
+
+<script>
+(function(){
+  function closeReceiptForNavigation(){
+    // Try the common receipt/modal close functions already used by the app.
+    if(typeof closeReceipt === 'function') { try{ closeReceipt(); }catch(e){} }
+    if(typeof closeModal === 'function') { try{ closeModal(); }catch(e){} }
+    // Also remove common open-state classes/attributes without touching cart state.
+    document.querySelectorAll(
+      '.receipt-modal.open,.receipt-modal.show,.modal.open,.modal.show,'+
+      '#receiptModal.open,#receiptModal.show'
+    ).forEach(el=>{
+      el.classList.remove('open','show');
+      el.setAttribute('aria-hidden','true');
+    });
+  }
+
+  document.querySelectorAll('.bottom-nav a').forEach(link=>{
+    link.addEventListener('click',function(){
+      closeReceiptForNavigation();
+    },{capture:true});
+  });
+})();
+</script>
+
+
+<script>
+/* LA PARADA — Modificadores de hamburguesas y burritos */
+(function(){
+  const LP_MODIFIERS = {
+    "Hamburguesa Arrachera": {
+      type:"burger",
+      defaultCheese:"Monterrey",
+      cheeses:["Monterrey"],
+      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Guacamole","Mayonesa","Catsup","Mostaza"],
+      extras:[]
+    },
+    "Hamburguesa Doble Carne": {
+      type:"burger",
+      defaultCheese:"Q amarillo",
+      cheeses:["Q amarillo","Q Oaxaca"],
+      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+      extras:[["Tocino",10],["Piña",15]]
+    },
+    "Hamburguesa Hawaiana": {
+      type:"burger",
+      defaultCheese:"Q amarillo",
+      cheeses:["Q amarillo"],
+      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+      extras:[["Tocino",10]],
+      defaults:["Jamón","Tocino"]
+    },
+    "Hamburguesa Sencilla": {
+      type:"burger",
+      defaultCheese:"Q amarillo",
+      cheeses:["Q amarillo"],
+      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+      extras:[["Tocino",10]]
+    },
+    "Burrito Arrachera": {
+      type:"burrito",
+      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
+    },
+    "Burrito Birria": {
+      type:"burrito",
+      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
+    },
+    "Burrito Cecina Natural/Enchilada": {
+      type:"burrito",
+      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
+    },
+    "Burrito Campechano": {
+      type:"burrito",
+      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
+    }
+  };
+
+  let pending = null;
+
+  function normalize(s){
+    return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim();
+  }
+
+  function findModifier(name){
+    const n=normalize(name);
+    return Object.keys(LP_MODIFIERS).find(k=>normalize(k)===n) || null;
+  }
+
+  function getPrice(){
+    return pending ? Number(pending.price||0) : 0;
+  }
+
+  function renderModal(product, config){
+    let html = `
+      <div class="lp-mod-overlay" id="lpModOverlay">
+        <div class="lp-mod-card" role="dialog" aria-modal="true">
+          <button class="lp-mod-close" type="button" onclick="LP_MOD.close()">×</button>
+          <div class="lp-mod-kicker">PERSONALIZA TU PEDIDO</div>
+          <h2>${product.name}</h2>
+          <p class="lp-mod-base">${formatMoney(product.price)}</p>
+          <div class="lp-mod-body">
+    `;
+
+    if(config.type==="burger"){
+      html += `<section class="lp-mod-section"><h3>🧀 Queso</h3>`;
+      config.cheeses.forEach((c,i)=>{
+        const checked = i===0 ? "checked" : "";
+        html += `<label class="lp-choice"><input type="radio" name="lpCheese" value="${c}" ${checked}><span>${c}</span></label>`;
+      });
+      if(config.defaults?.length){
+        html += `<div class="lp-default-note">Incluye por defecto: ${config.defaults.join(", ")}</div>`;
+      }
+      html += `</section>`;
+    }
+
+    if(config.selectable?.length){
+      html += `<section class="lp-mod-section"><h3>${config.type==="burger" ? "🥬 Ingredientes" : "🌯 Ingredientes incluidos"}</h3>`;
+      config.selectable.forEach((item,i)=>{
+        const checked = config.type==="burrito" ? "checked" : "";
+        html += `<label class="lp-choice lp-check"><input type="checkbox" name="lpIng" value="${item}" ${checked}><span>${item}</span></label>`;
+      });
+      html += `</section>`;
+    }
+
+    if(config.extras?.length){
+      html += `<section class="lp-mod-section"><h3>➕ Extras</h3>`;
+      config.extras.forEach(([name,price])=>{
+        html += `<label class="lp-choice lp-check"><input type="checkbox" name="lpExtra" value="${name}" data-price="${price}"><span>${name}</span><b>+$${price}</b></label>`;
+      });
+      html += `</section>`;
+    }
+
+    html += `
+          </div>
+          <div class="lp-mod-total"><span>Total</span><strong id="lpModTotal">${formatMoney(product.price)}</strong></div>
+          <button class="lp-mod-add" type="button" onclick="LP_MOD.confirm()">Agregar al carrito</button>
+        </div>
+      </div>`;
+    document.body.insertAdjacentHTML("beforeend",html);
+    document.querySelectorAll('#lpModOverlay input').forEach(el=>el.addEventListener('change',updateTotal));
+    updateTotal();
+  }
+
+  function formatMoney(n){
+    return "$"+Number(n||0).toLocaleString("es-MX",{minimumFractionDigits:0,maximumFractionDigits:0});
+  }
+
+  function updateTotal(){
+    const total=getPrice()+[...document.querySelectorAll('#lpModOverlay input[name="lpExtra"]:checked')]
+      .reduce((sum,e)=>sum+Number(e.dataset.price||0),0);
+    const el=document.getElementById("lpModTotal");
+    if(el) el.textContent=formatMoney(total);
+  }
+
+  function close(){
+    document.getElementById("lpModOverlay")?.remove();
+    pending=null;
+  }
+
+  function confirm(){
+    if(!pending) return;
+    const overlay=document.getElementById("lpModOverlay");
+    const cheese=[...overlay.querySelectorAll('input[name="lpCheese"]:checked')].map(x=>x.value);
+    const ingredients=[...overlay.querySelectorAll('input[name="lpIng"]:checked')].map(x=>x.value);
+    const extras=[...overlay.querySelectorAll('input[name="lpExtra"]:checked')].map(x=>({name:x.value,price:Number(x.dataset.price||0)}));
+    const extraTotal=extras.reduce((s,x)=>s+x.price,0);
+    const total=Number(pending.price||0)+extraTotal;
+    const mods=[];
+    if(cheese.length) mods.push("Queso: "+cheese[0]);
+    mods.push((pending.config.type==="burrito"?"Con":"Incluye")+": "+ingredients.join(", "));
+    if(extras.length) mods.push("Extras: "+extras.map(x=>`${x.name} (+$${x.price})`).join(", "));
+    if(pending.config.defaults?.length) mods.push("Por defecto: "+pending.config.defaults.join(", "));
+
+    // Use the existing app's add-to-cart function when available.
+    const item = {
+      name: pending.name,
+      price: total,
+      basePrice: Number(pending.price||0),
+      qty: 1,
+      customization: mods.join(" · "),
+      modifiers: {cheese,ingredients,extras,defaults:pending.config.defaults||[]}
+    };
+
+    if(typeof window.addToCart === "function"){
+      window.addToCart(item);
+    }else if(typeof window.addItem === "function"){
+      window.addItem(item);
+    }else{
+      // Compatibility: find the existing cart array by common names and update it.
+      const candidates=["cart","cartItems","carrito","items"];
+      let target=null;
+      for(const key of candidates){
+        if(Array.isArray(window[key])){target=window[key];break;}
+      }
+      if(target){
+        target.push(item);
+        try{localStorage.setItem("laParadaCart",JSON.stringify(target));}catch(e){}
+      }
+    }
+    close();
+  }
+
+  function open(name,price){
+    const key=findModifier(name);
+    if(!key) return false;
+    pending={name:key,price:Number(price||0),config:LP_MODIFIERS[key]};
+    renderModal(pending,pending.config);
+    return true;
+  }
+
+  window.LP_MOD={open,close,confirm,updateTotal};
+
+  // Expose configuration for the app and safely intercept only matching product
+  // buttons. The existing non-modifier products continue to use their original handlers.
+  function intercept(){
+    document.querySelectorAll(".card").forEach(card=>{
+      const title=card.querySelector("h3");
+      if(!title || card.dataset.lpModifierBound) return;
+      const key=findModifier(title.textContent);
+      if(!key) return;
+      const button=card.querySelector(".add,button");
+      if(!button) return;
+      const priceText=card.querySelector(".price")?.textContent || "0";
+      const price=Number(priceText.replace(/[^\d.]/g,"")) || 0;
+      card.dataset.lpModifierBound="1";
+      button.type="button";
+      button.addEventListener("click",function(e){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        LP_MOD.open(key,price);
+      },true);
+    });
+  }
+  new MutationObserver(intercept).observe(document.body,{childList:true,subtree:true});
+  window.addEventListener("load",intercept);
+  setTimeout(intercept,300);
 })();
 </script>
 
