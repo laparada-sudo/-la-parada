@@ -490,50 +490,66 @@ input:focus,select:focus,textarea:focus{
 </style>
 
 <style>
-/* Modificadores La Parada */
-.lp-mod-overlay{
-  position:fixed;inset:0;z-index:20000;
-  background:rgba(33,19,11,.72);
-  backdrop-filter:blur(5px);
-  display:flex;align-items:flex-end;justify-content:center;
-  padding:12px;
+/* V11 — modificadores tipo app */
+#modalback .modal{
+  background:#F8F7F6!important;
+  color:#21130B!important;
+  border:1px solid #DCCAB2!important;
+  border-radius:26px!important;
+  max-height:88vh;
+  overflow:hidden;
 }
-.lp-mod-card{
-  width:min(620px,100%);max-height:92vh;overflow:auto;
-  background:#F8F7F6;color:#21130B;border-radius:26px 26px 18px 18px;
-  box-shadow:0 30px 80px rgba(0,0,0,.35);padding:22px;
+.lp-v11-kicker{
+  color:#F86103;font-size:11px;font-weight:950;letter-spacing:1px;margin-bottom:5px
 }
-.lp-mod-close{
-  float:right;width:38px;height:38px;border:0;border-radius:50%;
-  background:#DCCAB2;color:#21130B;font-size:25px;line-height:1;
+.lp-v11-title{
+  color:#21130B!important;font-size:28px!important;margin:0!important
 }
-.lp-mod-kicker{font-size:11px;font-weight:950;letter-spacing:1.1px;color:#F86103}
-.lp-mod-card h2{margin:5px 42px 0 0;font-size:28px;color:#21130B}
-.lp-mod-base{margin:4px 0 15px;color:#F86103;font-weight:950;font-size:20px}
-.lp-mod-section{border-top:1px solid #DCCAB2;padding:15px 0}
-.lp-mod-section h3{font-size:16px;margin:0 0 9px;color:#59381D}
-.lp-choice{
+.lp-v11-sub{color:#75685c!important;margin:5px 0 10px!important;font-size:13px}
+.lp-v11-scroll{
+  max-height:52vh;overflow-y:auto;padding-right:3px;
+  scrollbar-width:thin;
+}
+.lp-v11-section{
+  border-top:1px solid #DCCAB2;padding:13px 0;
+}
+.lp-v11-heading{
+  display:flex;gap:10px;align-items:center;margin-bottom:7px;
+}
+.lp-v11-heading>span{
+  width:35px;height:35px;border-radius:11px;background:rgba(248,97,3,.10);
+  display:grid;place-items:center;
+}
+.lp-v11-heading b{display:block;color:#59381D;font-size:15px}
+.lp-v11-heading small{display:block;color:#75685c;font-size:11px;margin-top:1px}
+.lp-v11-option{
   display:flex;align-items:center;gap:10px;
-  padding:11px 10px;margin:5px 0;border:1px solid #eadfd2;
-  border-radius:13px;background:#fff;cursor:pointer;
+  min-height:43px;margin:5px 0;padding:9px 11px;
+  background:#fff;border:1px solid #EADFD2;border-radius:12px;
+  cursor:pointer;
 }
-.lp-choice input{accent-color:#F86103;width:18px;height:18px}
-.lp-choice span{flex:1}
-.lp-choice b{color:#F86103}
-.lp-default-note{
-  background:#E2AC62;color:#21130B;border-radius:10px;
-  padding:8px 10px;font-size:12px;font-weight:800;margin-top:8px;
+.lp-v11-option:has(input:checked){
+  border-color:#F86103;background:rgba(248,97,3,.06);
 }
-.lp-mod-total{
+.lp-v11-option input{
+  width:18px;height:18px;accent-color:#F86103;flex:0 0 auto;
+}
+.lp-v11-option span{flex:1;color:#21130B;font-weight:700;font-size:13px}
+.lp-v11-option b{color:#F86103;font-size:12px}
+.lp-v11-total{
   display:flex;justify-content:space-between;align-items:center;
-  border-top:2px dashed #DCCAB2;padding:15px 0 10px;font-weight:900;
+  border-top:2px dashed #DCCAB2;padding:12px 0 8px;
+  color:#21130B;font-weight:900;
 }
-.lp-mod-total strong{color:#F86103;font-size:23px}
-.lp-mod-add{
-  width:100%;border:0;border-radius:14px;padding:15px;
-  background:#F86103;color:#fff;font-size:16px;font-weight:950;
+.lp-v11-total strong{font-size:23px;color:#F86103}
+.lp-v11-actions{margin-top:0}
+.lp-v11-confirm{
+  background:#F86103!important;color:#fff!important;border:0!important;
 }
-.lp-mod-add:active{transform:scale(.99)}
+@media(max-width:600px){
+  #modalback .modal{width:calc(100% - 24px)!important;padding:18px!important}
+  .lp-v11-scroll{max-height:50vh}
+}
 </style>
 
 </head>
@@ -781,49 +797,163 @@ function filterMenu(q){
 function addSimple(name,price){cart.push({name,price,qty:1,extra:''});render();openCart();}
 function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});render();openCart();}
 
-function customBurger(name,base){
-pending={type:'burger',name,base};
-document.getElementById('modal').innerHTML=`
-<h2>🍔 ${esc(name)}</h2><p>Personaliza tu hamburguesa.</p>
-<label><b>¿Con papas?</b></label>
-<select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
-<label><b>Queso</b></label><select class="select" id="m_queso"><option>El de la receta</option><option>Americano</option><option>Oaxaca</option><option>Sin queso</option></select>
-<label class="check"><input type="checkbox" id="m_sceb"> Sin cebolla</label>
-<label class="check"><input type="checkbox" id="m_sjit"> Sin jitomate</label>
-<label class="check"><input type="checkbox" id="m_slech"> Sin lechuga</label>
-<label class="check"><input type="checkbox" id="m_spep"> Sin pepinillos</label>
-<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmBurger()">Agregar</button></div>`;
-showModal();
-}
-function confirmBurger(){
-const extra=[]; const p=+document.getElementById('m_papas').value;
-extra.push(document.getElementById('m_queso').value);
-['ceb','jit','lech','pep'].forEach(k=>{if(document.getElementById('m_s'+k).checked)extra.push('Sin '+({ceb:'cebolla',jit:'jitomate',lech:'lechuga',pep:'pepinillos'}[k]));});
-addConfigured('Hamburguesa '+pending.name,pending.base+p,extra.join(', ')+(p?' · Con papas':' · Sin papas'));closeModal();
+
+const LP_BURGERS = {
+  "Sencilla": {
+    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
+    ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    extras:[["Tocino",10]]
+  },
+  "Hawaiana": {
+    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
+    ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    included:["Jamón","Tocino"],
+    extras:[["Tocino extra",10]]
+  },
+  "Doble carne": {
+    cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
+    ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
+    extras:[["Tocino",10],["Piña",15]]
+  },
+  "Arrachera": {
+    cheeses:["Monterrey"], defaultCheese:"Monterrey",
+    ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Guacamole","Mayonesa","Catsup","Mostaza"],
+    defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Guacamole","Mayonesa","Catsup","Mostaza"],
+    extras:[]
+  }
+};
+
+const LP_BURRITOS = {
+  "Arrachera": ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"],
+  "Birria": ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"],
+  "Cecina / enchilada": ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"],
+  "Campechanos": ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
+};
+
+function lpOption(text, name, checked, type="checkbox", extraPrice=""){
+  const price = extraPrice ? `<b>+$${extraPrice}</b>` : "";
+  return `<label class="lp-v11-option">
+    <input type="${type}" name="${name}" value="${esc(text)}" ${checked?"checked":""} ${extraPrice?`data-price="${extraPrice}"`:``}>
+    <span>${esc(text)}</span>${price}
+  </label>`;
 }
 
-function customWings(n,base){customSauce('Alitas '+n+' piezas',base);}
-function customBone(n,base){customSauce('Boneless '+n+' piezas',base);}
-function customSauce(name,base){
-pending={name,base};
-document.getElementById('modal').innerHTML=`
-<h2>🍗 ${esc(name)}</h2><p>Elige cómo las quieres.</p>
-<label><b>Salsa</b></label><select class="select" id="m_salsa"><option>BBQ Tamarindo</option><option>BBQ Hot</option><option>Buffalo</option><option>Mango Habanero</option></select>
-<label><b>Papas</b></label><select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
-<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmSauce()">Agregar</button></div>`;
-showModal();
+function lpModifierShell(title, subtitle, body, base){
+  document.getElementById('modal').innerHTML = `
+    <div class="lp-v11-kicker">PERSONALIZA TU PEDIDO</div>
+    <h2 class="lp-v11-title">${esc(title)}</h2>
+    <p class="lp-v11-sub">${esc(subtitle)}</p>
+    <div class="lp-v11-scroll">${body}</div>
+    <div class="lp-v11-total"><span>Total</span><strong id="lpV11Total">$${base}</strong></div>
+    <div class="modal-actions lp-v11-actions">
+      <button class="cancel" onclick="closeModal()">Cancelar</button>
+      <button class="confirm lp-v11-confirm" id="lpV11Confirm">Agregar al carrito</button>
+    </div>`;
+  showModal();
 }
-function confirmSauce(){const p=+document.getElementById('m_papas').value;const s=document.getElementById('m_salsa').value;addConfigured(pending.name,pending.base+p,`Salsa: ${s}${p?' · Con papas':' · Sin papas'}`);closeModal();}
+
+function lpUpdateTotal(base){
+  let total=Number(base||0);
+  document.querySelectorAll('#modal input[data-price]:checked').forEach(x=>total+=Number(x.dataset.price||0));
+  const fries=document.getElementById('lpV11Fries');
+  if(fries && fries.checked) total+=15;
+  const el=document.getElementById('lpV11Total');
+  if(el) el.textContent='$'+total;
+  return total;
+}
+
+function customBurger(name,base){
+  const cfg=LP_BURGERS[name] || LP_BURGERS[Object.keys(LP_BURGERS).find(k=>k.toLowerCase()===name.toLowerCase())];
+  if(!cfg){ return; }
+  pending={type:"burger",name,base,cfg};
+
+  let body = `<section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige una opción</small></div></div>
+    ${cfg.cheeses.map((c,i)=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
+  </section>`;
+
+  if(cfg.included?.length){
+    body += `<section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍍</span><div><b>Incluido en la receta</b><small>Así viene por defecto</small></div></div>
+      ${cfg.included.map(x=>lpOption(x,"lpV11Included",true)).join("")}
+    </section>`;
+  }
+
+  body += `<section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🥬</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
+    ${cfg.ingredients.map(x=>lpOption(x,"lpV11Ingredient",cfg.defaults.includes(x))).join("")}
+  </section>`;
+
+  if(cfg.extras.length){
+    body += `<section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>➕</span><div><b>Extras</b><small>Agrega por un costo adicional</small></div></div>
+      ${cfg.extras.map(([x,p])=>lpOption(x,"lpV11Extra",false,"checkbox",p)).join("")}
+    </section>`;
+  }
+
+  body += `<section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Opcional</small></div></div>
+    ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+  </section>`;
+
+  lpModifierShell(`🍔 ${name}`,"Personaliza tu hamburguesa como la quieres.",body,base);
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
+  document.getElementById('lpV11Confirm').onclick=()=>confirmBurgerV11();
+}
+
+function confirmBurgerV11(){
+  const p=Number(pending.base||0);
+  const cheese=document.querySelector('#modal input[name="lpV11Cheese"]:checked')?.value || "";
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpV11Ingredient"]:checked')].map(x=>x.value);
+  const included=[...document.querySelectorAll('#modal input[name="lpV11Included"]:checked')].map(x=>x.value);
+  const extras=[...document.querySelectorAll('#modal input[name="lpV11Extra"]:checked')].map(x=>`${x.value} (+$${x.dataset.price})`);
+  const fries=document.getElementById('lpV11Fries')?.checked;
+  const total=lpUpdateTotal(p);
+  const details=[
+    `Queso: ${cheese}`,
+    `Ingredientes: ${ingredients.length?ingredients.join(", "):"ninguno"}`,
+    included.length?`Incluye: ${included.join(", ")}`:"",
+    extras.length?`Extras: ${extras.join(", ")}`:"",
+    fries?"Con papas (+$15)":"Sin papas"
+  ].filter(Boolean).join(" · ");
+  addConfigured("Hamburguesa "+pending.name,total,details);
+  closeModal();
+}
 
 function customBurrito(name,base){
-pending={name,base};
-document.getElementById('modal').innerHTML=`
-<h2>🌯 Burrito ${esc(name)}</h2><p>Elige tu presentación.</p>
-<select class="select" id="m_papas"><option value="0">Sin papas — $${base}</option><option value="15">Con papas — $${base+15}</option></select>
-<div class="modal-actions"><button class="cancel" onclick="closeModal()">Cancelar</button><button class="confirm" onclick="confirmBurrito()">Agregar</button></div>`;
-showModal();
+  let key=Object.keys(LP_BURRITOS).find(k=>k.toLowerCase()===name.toLowerCase()) || name;
+  const ingredients=LP_BURRITOS[key] || ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"];
+  pending={type:"burrito",name,base,ingredients};
+
+  const body = `
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Seleccionados por defecto · puedes quitar cualquiera</small></div></div>
+      ${ingredients.map(x=>lpOption(x,"lpV11BurritoIngredient",true)).join("")}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍟</span><div><b>Presentación</b><small>Elige si quieres papas</small></div></div>
+      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+    </section>`;
+
+  lpModifierShell(`🌯 Burrito ${name}`,"Arma tu burrito con los ingredientes que prefieras.",body,base);
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
+  document.getElementById('lpV11Confirm').onclick=()=>confirmBurritoV11();
 }
-function confirmBurrito(){const p=+document.getElementById('m_papas').value;addConfigured('Burrito '+pending.name,pending.base+p,p?'Con papas':'Sin papas');closeModal();}
+
+function confirmBurritoV11(){
+  const total=lpUpdateTotal(pending.base);
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]:checked')].map(x=>x.value);
+  const fries=document.getElementById('lpV11Fries')?.checked;
+  const details=[
+    ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Sin ingredientes",
+    fries?"Con papas (+$15)":"Sin papas"
+  ].join(" · ");
+  addConfigured("Burrito "+pending.name,total,details);
+  closeModal();
+}
 
 function customFrappe(name,base){
 pending={name,base};
@@ -1062,220 +1192,6 @@ if(categoryTrack && categorySections.length){
       closeReceiptForNavigation();
     },{capture:true});
   });
-})();
-</script>
-
-
-<script>
-/* LA PARADA — Modificadores de hamburguesas y burritos */
-(function(){
-  const LP_MODIFIERS = {
-    "Hamburguesa Arrachera": {
-      type:"burger",
-      defaultCheese:"Monterrey",
-      cheeses:["Monterrey"],
-      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Guacamole","Mayonesa","Catsup","Mostaza"],
-      extras:[]
-    },
-    "Hamburguesa Doble Carne": {
-      type:"burger",
-      defaultCheese:"Q amarillo",
-      cheeses:["Q amarillo","Q Oaxaca"],
-      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
-      extras:[["Tocino",10],["Piña",15]]
-    },
-    "Hamburguesa Hawaiana": {
-      type:"burger",
-      defaultCheese:"Q amarillo",
-      cheeses:["Q amarillo"],
-      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
-      extras:[["Tocino",10]],
-      defaults:["Jamón","Tocino"]
-    },
-    "Hamburguesa Sencilla": {
-      type:"burger",
-      defaultCheese:"Q amarillo",
-      cheeses:["Q amarillo"],
-      selectable:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
-      extras:[["Tocino",10]]
-    },
-    "Burrito Arrachera": {
-      type:"burrito",
-      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
-    },
-    "Burrito Birria": {
-      type:"burrito",
-      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
-    },
-    "Burrito Cecina Natural/Enchilada": {
-      type:"burrito",
-      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
-    },
-    "Burrito Campechano": {
-      type:"burrito",
-      selectable:["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"]
-    }
-  };
-
-  let pending = null;
-
-  function normalize(s){
-    return (s||"").normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/\s+/g," ").trim();
-  }
-
-  function findModifier(name){
-    const n=normalize(name);
-    return Object.keys(LP_MODIFIERS).find(k=>normalize(k)===n) || null;
-  }
-
-  function getPrice(){
-    return pending ? Number(pending.price||0) : 0;
-  }
-
-  function renderModal(product, config){
-    let html = `
-      <div class="lp-mod-overlay" id="lpModOverlay">
-        <div class="lp-mod-card" role="dialog" aria-modal="true">
-          <button class="lp-mod-close" type="button" onclick="LP_MOD.close()">×</button>
-          <div class="lp-mod-kicker">PERSONALIZA TU PEDIDO</div>
-          <h2>${product.name}</h2>
-          <p class="lp-mod-base">${formatMoney(product.price)}</p>
-          <div class="lp-mod-body">
-    `;
-
-    if(config.type==="burger"){
-      html += `<section class="lp-mod-section"><h3>🧀 Queso</h3>`;
-      config.cheeses.forEach((c,i)=>{
-        const checked = i===0 ? "checked" : "";
-        html += `<label class="lp-choice"><input type="radio" name="lpCheese" value="${c}" ${checked}><span>${c}</span></label>`;
-      });
-      if(config.defaults?.length){
-        html += `<div class="lp-default-note">Incluye por defecto: ${config.defaults.join(", ")}</div>`;
-      }
-      html += `</section>`;
-    }
-
-    if(config.selectable?.length){
-      html += `<section class="lp-mod-section"><h3>${config.type==="burger" ? "🥬 Ingredientes" : "🌯 Ingredientes incluidos"}</h3>`;
-      config.selectable.forEach((item,i)=>{
-        const checked = config.type==="burrito" ? "checked" : "";
-        html += `<label class="lp-choice lp-check"><input type="checkbox" name="lpIng" value="${item}" ${checked}><span>${item}</span></label>`;
-      });
-      html += `</section>`;
-    }
-
-    if(config.extras?.length){
-      html += `<section class="lp-mod-section"><h3>➕ Extras</h3>`;
-      config.extras.forEach(([name,price])=>{
-        html += `<label class="lp-choice lp-check"><input type="checkbox" name="lpExtra" value="${name}" data-price="${price}"><span>${name}</span><b>+$${price}</b></label>`;
-      });
-      html += `</section>`;
-    }
-
-    html += `
-          </div>
-          <div class="lp-mod-total"><span>Total</span><strong id="lpModTotal">${formatMoney(product.price)}</strong></div>
-          <button class="lp-mod-add" type="button" onclick="LP_MOD.confirm()">Agregar al carrito</button>
-        </div>
-      </div>`;
-    document.body.insertAdjacentHTML("beforeend",html);
-    document.querySelectorAll('#lpModOverlay input').forEach(el=>el.addEventListener('change',updateTotal));
-    updateTotal();
-  }
-
-  function formatMoney(n){
-    return "$"+Number(n||0).toLocaleString("es-MX",{minimumFractionDigits:0,maximumFractionDigits:0});
-  }
-
-  function updateTotal(){
-    const total=getPrice()+[...document.querySelectorAll('#lpModOverlay input[name="lpExtra"]:checked')]
-      .reduce((sum,e)=>sum+Number(e.dataset.price||0),0);
-    const el=document.getElementById("lpModTotal");
-    if(el) el.textContent=formatMoney(total);
-  }
-
-  function close(){
-    document.getElementById("lpModOverlay")?.remove();
-    pending=null;
-  }
-
-  function confirm(){
-    if(!pending) return;
-    const overlay=document.getElementById("lpModOverlay");
-    const cheese=[...overlay.querySelectorAll('input[name="lpCheese"]:checked')].map(x=>x.value);
-    const ingredients=[...overlay.querySelectorAll('input[name="lpIng"]:checked')].map(x=>x.value);
-    const extras=[...overlay.querySelectorAll('input[name="lpExtra"]:checked')].map(x=>({name:x.value,price:Number(x.dataset.price||0)}));
-    const extraTotal=extras.reduce((s,x)=>s+x.price,0);
-    const total=Number(pending.price||0)+extraTotal;
-    const mods=[];
-    if(cheese.length) mods.push("Queso: "+cheese[0]);
-    mods.push((pending.config.type==="burrito"?"Con":"Incluye")+": "+ingredients.join(", "));
-    if(extras.length) mods.push("Extras: "+extras.map(x=>`${x.name} (+$${x.price})`).join(", "));
-    if(pending.config.defaults?.length) mods.push("Por defecto: "+pending.config.defaults.join(", "));
-
-    // Use the existing app's add-to-cart function when available.
-    const item = {
-      name: pending.name,
-      price: total,
-      basePrice: Number(pending.price||0),
-      qty: 1,
-      customization: mods.join(" · "),
-      modifiers: {cheese,ingredients,extras,defaults:pending.config.defaults||[]}
-    };
-
-    if(typeof window.addToCart === "function"){
-      window.addToCart(item);
-    }else if(typeof window.addItem === "function"){
-      window.addItem(item);
-    }else{
-      // Compatibility: find the existing cart array by common names and update it.
-      const candidates=["cart","cartItems","carrito","items"];
-      let target=null;
-      for(const key of candidates){
-        if(Array.isArray(window[key])){target=window[key];break;}
-      }
-      if(target){
-        target.push(item);
-        try{localStorage.setItem("laParadaCart",JSON.stringify(target));}catch(e){}
-      }
-    }
-    close();
-  }
-
-  function open(name,price){
-    const key=findModifier(name);
-    if(!key) return false;
-    pending={name:key,price:Number(price||0),config:LP_MODIFIERS[key]};
-    renderModal(pending,pending.config);
-    return true;
-  }
-
-  window.LP_MOD={open,close,confirm,updateTotal};
-
-  // Expose configuration for the app and safely intercept only matching product
-  // buttons. The existing non-modifier products continue to use their original handlers.
-  function intercept(){
-    document.querySelectorAll(".card").forEach(card=>{
-      const title=card.querySelector("h3");
-      if(!title || card.dataset.lpModifierBound) return;
-      const key=findModifier(title.textContent);
-      if(!key) return;
-      const button=card.querySelector(".add,button");
-      if(!button) return;
-      const priceText=card.querySelector(".price")?.textContent || "0";
-      const price=Number(priceText.replace(/[^\d.]/g,"")) || 0;
-      card.dataset.lpModifierBound="1";
-      button.type="button";
-      button.addEventListener("click",function(e){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        LP_MOD.open(key,price);
-      },true);
-    });
-  }
-  new MutationObserver(intercept).observe(document.body,{childList:true,subtree:true});
-  window.addEventListener("load",intercept);
-  setTimeout(intercept,300);
 })();
 </script>
 
