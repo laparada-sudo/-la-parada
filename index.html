@@ -620,7 +620,11 @@ input:focus,select:focus,textarea:focus{
 .drawer,.back{z-index:40!important}
 .receipt-back{z-index:70!important}
 </style>
-</head>
+<style>
+.location p,.location b,.location strong,.location h2,.location h3{color:#fff!important;opacity:1!important}
+.mobile-nav,.mobile-nav button{z-index:10000!important;pointer-events:auto!important}
+.lp-option input:disabled + span{opacity:.45;text-decoration:line-through}
+</style></head>
 <body>
 
 <header class="header">
@@ -856,17 +860,17 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
 function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
 function go(id){
-  // Navigation remains usable from cart and receipt.
-  try{ closeCart(); }catch(e){}
-  try{ closeReceipt(); }catch(e){}
-  try{ closeModal(); }catch(e){}
+  try{closeCart();}catch(e){}
+  try{closeReceipt();}catch(e){}
+  try{closeModal();}catch(e){}
   const el=document.getElementById(id);
-  if(!el) return;
+  if(!el)return;
   const track=document.getElementById('categoryTrack');
   if(track && el.parentElement===track){
     track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
+    window.scrollTo({top:0,behavior:'smooth'});
   }else{
-    el.scrollIntoView({behavior:'smooth'});
+    window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});
   }
 }
 function filterMenu(q){
@@ -962,6 +966,7 @@ function lpSaucePrice(total){
 }
 
 function customWingsV13(pieces,base){
+ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"wings",name:`Alitas ${pieces} piezas`,solo,conPapas};
@@ -991,6 +996,7 @@ function customWingsV13(pieces,base){
 }
 
 function customBonelessV13(pieces,base){
+ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"boneless",name:`Boneless ${pieces} piezas`,solo,conPapas};
@@ -1507,5 +1513,47 @@ if(categoryTrack && categorySections.length){
 })();
 </script>
 
+
+<script>
+(function(){
+function modalInputs(n){return Array.from(document.querySelectorAll('#modal input[name="'+n+'"]'))}
+function syncAll(){
+ const a=document.querySelector('#modal input[name="lpV11All"]'); if(!a)return;
+ ['lpV11Ingredient','lpV11BurritoIngredient','lpHotDogIngredient'].forEach(n=>{
+   modalInputs(n).forEach(x=>{x.disabled=a.checked; x.closest('label')&&(x.closest('label').style.opacity=a.checked?.45:1)})
+ });
+}
+function syncCheese(){
+ const m=document.querySelector('#modal input[name="lpV11Monterrey"]');
+ if(!m)return;
+ modalInputs('lpV11Cheese').forEach(x=>{x.disabled=m.checked; x.closest('label')&&(x.closest('label').style.opacity=m.checked?.45:1)})
+}
+function syncSauce(){
+ const boxes=modalInputs('lpChickenSauce'), max=window.__lpSauceMax||2;
+ let c=boxes.filter(x=>x.checked);
+ if(c.length>max){c[c.length-1].checked=false}
+ c=boxes.filter(x=>x.checked);
+ boxes.forEach(x=>{x.disabled=!x.checked&&c.length>=max})
+}
+document.addEventListener('change',e=>{
+ if(!e.target.closest('#modal'))return;
+ if(e.target.name==='lpV11All')syncAll();
+ if(e.target.name==='lpV11Monterrey')syncCheese();
+ if(e.target.name==='lpChickenSauce')syncSauce();
+});
+const ob=new MutationObserver(()=>{
+ const modal=document.getElementById('modal'); if(!modal)return;
+ if(/Hamburguesa|Burrito|Hot Dog/i.test(modal.innerText||'')&&!modal.querySelector('#lpV4All')){
+   const sec=modal.querySelector('.lp-v11-section');
+   if(sec){
+    const d=document.createElement('div'); d.className='lp-v11-section';
+    d.innerHTML='<div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes</small></div></div><label class="lp-option"><input id="lpV4All" name="lpV11All" type="checkbox"><span>Con todo</span></label>';
+    sec.parentNode.insertBefore(d,sec);
+   }
+ }
+});
+ob.observe(document.body,{childList:true,subtree:true});
+})();
+</script>
 </body>
 </html>
