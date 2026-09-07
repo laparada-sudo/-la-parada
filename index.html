@@ -567,7 +567,38 @@ input:focus,select:focus,textarea:focus{
 </style>
 
 
-
+<style>
+/* Pin de Google Maps para pedidos */
+.address-box{margin:5px 0 8px}
+.address-box label{display:block;color:#59381D;font-size:13px;margin:4px 0}
+.pin-actions{display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-top:4px}
+.pin-btn{
+  border:1px solid #DCCAB2;background:#fff;color:#21130B;
+  border-radius:10px;padding:10px 8px;font-size:11px;font-weight:900;
+}
+.pin-btn:first-child{border-color:#F86103;color:#F86103}
+.pin-box{
+  margin-top:8px;padding:10px;border-radius:12px;
+  background:#FFF4EA;border:1px solid #E2AC62;
+}
+.pin-box label{font-size:11px}
+.pin-box input{margin:4px 0!important}
+.pin-box small{display:block;color:#75685c;font-size:10px;line-height:1.35}
+.pin-save{
+  margin-top:7px;border:0;border-radius:9px;padding:9px 12px;
+  background:#F86103;color:#fff;font-weight:900;font-size:11px;
+}
+.pin-status{min-height:16px;margin-top:5px;font-size:10px;color:#75685c}
+.pin-status.ok{color:#718C25;font-weight:900}
+.receipt-pin{
+  margin-top:6px;padding:7px 8px;background:#FFF4EA;
+  border-left:3px solid #F86103;font-size:10px;
+}
+.receipt-pin a{color:#F86103;font-weight:900;text-decoration:none}
+@media(max-width:600px){
+  .pin-actions{grid-template-columns:1fr}
+}
+</style>
 
 
 <style>
@@ -590,9 +621,10 @@ input:focus,select:focus,textarea:focus{
 .receipt-back{z-index:70!important}
 </style>
 <style>
-.location p,.location b,.location strong{color:#fff!important;opacity:1!important}
-.lp-option input:disabled+span{opacity:.45;text-decoration:line-through}
+.location p,.location b,.location strong,.location h2,.location h3{color:#fff!important;opacity:1!important}
 .mobile-nav,.mobile-nav button{z-index:10000!important;pointer-events:auto!important}
+.lp-v11-option input:disabled+span{opacity:.45;text-decoration:line-through}
+#categoryTrack{overscroll-behavior-x:contain}
 </style></head>
 <body>
 
@@ -632,7 +664,179 @@ input:focus,select:focus,textarea:focus{
     <span><b>A domicilio</b><small>Agrega tu dirección al finalizar</small></span>
     <strong>→</strong>
   </button>
-  <button onclick="document.getElementById('ubicacion').scrollIntoView({behavior:'smooth'}font-size:11px;color:#777;margin-top:6px">Se compartirá la imagen del recibo a WhatsApp: <b>+52 56 3695 1217</b></div>
+  <button onclick="document.getElementById('ubicacion').scrollIntoView({behavior:'smooth'})">
+    <span class="choice-icon">🏪</span>
+    <span><b>Pasar a recoger</b><small>Visítanos en Naucalpan</small></span>
+    <strong>→</strong>
+  </button>
+  <a href="https://wa.me/525636951217" target="_blank" rel="noopener">
+    <span class="choice-icon">💬</span>
+    <span><b>WhatsApp</b><small>+52 56 3695 1217</small></span>
+    <strong>→</strong>
+  </a>
+</div>
+
+<nav class="cats"><div class="cat-inner">
+<button class="cat active" onclick="event.preventDefault();go(\'recomendados\')">⭐ Recomendados</button>
+<button class="cat" onclick="event.preventDefault();go(\'hamburguesas\')">🍔 Hamburguesas</button>
+<button class="cat" onclick="event.preventDefault();go(\'burritos\')">🌯 Burritos</button>
+<button class="cat" onclick="event.preventDefault();go(\'alitas\')">🍗 Alitas</button>
+<button class="cat" onclick="event.preventDefault();go(\'boneless\')">🍗 Boneless</button>
+<button class="cat" onclick="event.preventDefault();go(\'hotdogs\')">🌭 Hot Dogs</button>
+<button class="cat" onclick="event.preventDefault();go(\'papas\')">🍟 Papas</button>
+<button class="cat" onclick="event.preventDefault();go(\'frappes\')">🥤 Frappés</button>
+<button class="cat" onclick="event.preventDefault();go(\'bebidas\')">🥤 Bebidas</button>
+</div></nav>
+
+<div class="promo-wrap">
+  <div class="promo">
+    <div>
+      <span class="promo-kicker">🔥 LA PARADA</span>
+      <h2>Empieza con los favoritos</h2>
+      <p>Elige una categoría y arma tu pedido.</p>
+    </div>
+    <a href="#recomendados">Ver favoritos →</a>
+  </div>
+</div>
+
+<main id="menu">
+
+<div class="category-hint">← <b>Desliza horizontalmente</b> para cambiar de categoría →</div>
+<div class="category-track" id="categoryTrack">
+<section class="section" id="recomendados">
+<div class="section-title"><h2>⭐ Los favoritos</h2><p>Para empezar</p></div>
+<div class="grid">
+<article class="card recommended"><span class="tag">⭐ RECOMENDADO</span><div class="card-top"><h3>🍔 Arrachera</h3><span class="price">$110</span></div><p class="desc">Arrachera, queso Monterrey, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup, mostaza y guacamole.</p><button class="add" onclick="customBurger('Arrachera',110)">Personalizar y agregar</button></article>
+<article class="card recommended"><span class="tag">🔥 FAVORITO</span><div class="card-top"><h3>🍗 Alitas 12</h3><span class="price">$135</span></div><p class="desc">12 piezas. Elige tu salsa y si las quieres con papas (+$15).</p><button class="add" onclick="customWingsV13(12,135)">Personalizar y agregar</button></article>
+<article class="card recommended"><span class="tag">🌯 PARA COMPARTIR</span><div class="card-top"><h3>Burrito Arrachera</h3><span class="price">$95</span></div><p class="desc">Arrachera, queso Oaxaca, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Arrachera',95)">Personalizar y agregar</button></article>
+</div>
+</section>
+
+<section class="section" id="hamburguesas">
+<div class="section-title"><h2>🍔 Hamburguesas</h2><p>Res y pollo</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Sencilla</h3><span class="price">$60</span></div><p class="desc">Carne, queso americano u Oaxaca, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup y mostaza.</p><button class="add" onclick="customBurger('Sencilla',60)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Hawaiana</h3><span class="price">$80</span></div><p class="desc">Carne, jamón, tocino, queso amarillo, pepinillos, lechuga, jitomate, cebolla, chiles, cátsup y mostaza.</p><button class="add" onclick="customBurger('Hawaiana',80)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Doble carne</h3><span class="price">$90</span></div><p class="desc">Doble carne, tocino, queso americano u Oaxaca, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup y mostaza.</p><button class="add" onclick="customBurger('Doble carne',90)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Arrachera</h3><span class="price">$110</span></div><p class="desc">Arrachera, queso Monterrey, pepinillos, lechuga, jitomate, cebolla, chiles vinagre, cátsup, mostaza y guacamole.</p><button class="add" onclick="customBurger('Arrachera',110)">Personalizar y agregar</button></article>
+</div><p class="note">* Con papas: +$15.</p>
+</section>
+
+<section class="section" id="burritos">
+<div class="section-title"><h2>🌯 Burritos</h2><p>Solo / con papas</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Arrachera</h3><span class="price">$95</span></div><p class="desc">Arrachera, queso Oaxaca fundido, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Arrachera',95)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Birria</h3><span class="price">$85</span></div><p class="desc">Birria, queso Oaxaca fundido, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Birria',85)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Cecina / enchilada</h3><span class="price">$80</span></div><p class="desc">Cecina de res o enchilada, queso Oaxaca fundido, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Cecina / enchilada',80)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Campechanos</h3><span class="price">$80</span></div><p class="desc">Cecina de res o enchilada y longaniza, queso Oaxaca, frijoles, guacamole, cebolla y cilantro.</p><button class="add" onclick="customBurrito('Campechanos',80)">Personalizar y agregar</button></article>
+</div><p class="note">* Con papas: +$15.</p>
+</section>
+
+<section class="section" id="alitas">
+<div class="section-title"><h2>🍗 Alitas</h2><p>Salsa + papas</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>8 piezas</h3><span class="price">$90</span></div><p class="desc">8 piezas. Con papas: $105.</p><button class="add" onclick="customWingsV13(8,90)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$135</span></div><p class="desc">12 piezas. Con papas: $150.</p><button class="add" onclick="customWingsV13(12,135)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$190</span></div><p class="desc">18 piezas. Con papas: $205.</p><button class="add" onclick="customWingsV13(18,190)">Personalizar y agregar</button></article>
+</div>
+</section>
+
+<section class="section" id="boneless">
+<div class="section-title"><h2>🍗 Boneless</h2><p>Salsa + papas</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>6 piezas</h3><span class="price">$80</span></div><p class="desc">6 piezas. Con papas: $95.</p><button class="add" onclick="customBonelessV13(6,80)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>12 piezas</h3><span class="price">$155</span></div><p class="desc">12 piezas. Con papas: $170.</p><button class="add" onclick="customBonelessV13(12,155)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>18 piezas</h3><span class="price">$230</span></div><p class="desc">18 piezas. Con papas: $245.</p><button class="add" onclick="customBonelessV13(18,230)">Personalizar y agregar</button></article>
+</div>
+</section>
+
+<section class="section" id="hotdogs">
+<div class="section-title"><h2>🌭 Hot Dogs</h2><p>Solo / con papas</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Sencillo</h3><span class="price">$25</span></div><p class="desc">Salchicha, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="customHotDog('Sencillo',25,35)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Especial</h3><span class="price">$30</span></div><p class="desc">Salchicha, tocino, queso Oaxaca, jitomate, cebolla, cátsup, mostaza y jalapeños.</p><button class="add" onclick="customHotDog('Especial',30,40)">Personalizar y agregar</button></article>
+</div><p class="note">* Con papas: $35 sencillo / $40 especial.</p>
+</section>
+
+<section class="section" id="papas">
+<div class="section-title"><h2>🍟 Papas</h2></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Orden chica</h3><span class="price">$35</span></div><button class="add" onclick="addSimple('Papas a la francesa chicas',35)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Orden grande</h3><span class="price">$50</span></div><button class="add" onclick="addSimple('Papas a la francesa grandes',50)">Agregar</button></article>
+</div>
+</section>
+
+<section class="section" id="frappes">
+<div class="section-title"><h2>🥤 Frappés</h2><p>Elige tu leche</p></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Galleta Oreo</h3><span class="price">$45</span></div><p class="desc">Entera $45 · Deslactosada $50.</p><button class="add" onclick="customFrappe('Galleta Oreo',45)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Mazapán</h3><span class="price">$40</span></div><p class="desc">Entera $40 · Deslactosada $45.</p><button class="add" onclick="customFrappe('Mazapán',40)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Frutos rojos</h3><span class="price">$45</span></div><p class="desc">Entera $45 · Deslactosada $50.</p><button class="add" onclick="customFrappe('Frutos rojos',45)">Personalizar y agregar</button></article>
+<article class="card"><div class="card-top"><h3>Capuchino</h3><span class="price">$45</span></div><p class="desc">Entera $45 · Deslactosada $50.</p><button class="add" onclick="customFrappe('Capuchino',45)">Personalizar y agregar</button></article>
+</div>
+</section>
+
+<section class="section" id="bebidas">
+<div class="section-title"><h2>🥤 Bebidas</h2></div>
+<div class="grid">
+<article class="card"><div class="card-top"><h3>Coca-Cola</h3><span class="price">$25</span></div><button class="add" onclick="addSimple('Coca-Cola',25)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Boing de vidrio</h3><span class="price">$25</span></div><button class="add" onclick="addSimple('Boing de vidrio',25)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Sidral</h3><span class="price">$25</span></div><button class="add" onclick="addSimple('Sidral',25)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Sprite</h3><span class="price">$25</span></div><button class="add" onclick="addSimple('Sprite',25)">Agregar</button></article>
+<article class="card"><div class="card-top"><h3>Topo Chico</h3><span class="price">$25</span></div><button class="add" onclick="addSimple('Topo Chico',25)">Agregar</button></article>
+</div>
+</section>
+
+</div>
+
+<section class="section" id="ubicacion">
+<div class="location">
+<h2>📍 La Parada</h2>
+<p><b>Horario:</b> jueves, viernes y sábado · 7:00 PM a 11:00 PM</p>
+<p><b>Pedidos:</b> 56 3695 1217</p>
+<p><b>📍 Dirección:</b> Circunvalación Manzana 021, Olímpica, 53690 Naucalpan de Juárez, Méx.</p>
+<p><b>🕐 Horario:</b> jueves a sábado · 7:00 PM a 11:00 PM</p>
+<a href="https://maps.app.goo.gl/UZKfutTN7UiSKuAt9?g_st=ic" target="_blank" rel="noopener">📍 Cómo llegar en Google Maps</a>
+</div>
+</section>
+</main>
+
+<footer><img class="footlogo" src="logo.jpg" alt="La Parada"><p>LA PARADA · Hamburguesas, Burritos & Alitas</p><p>Jueves a sábado · 7:00 PM a 11:00 PM</p><p>Pedidos por WhatsApp · 56 3695 1217</p></footer>
+
+<div id="back" class="back" onclick="closeCart()"></div>
+<aside id="drawer" class="drawer">
+<div class="dhead"><h2>🛒 TU PEDIDO</h2><button class="close" onclick="closeCart()">×</button></div>
+<div id="cart"></div>
+<div class="total"><span>Total</span><span id="total">$0</span></div>
+<div class="form"><h3>Datos de entrega</h3>
+<input id="nombre" placeholder="Tu nombre">
+<div class="address-box">
+  <label for="direccion"><b>📍 Dirección de entrega</b></label>
+  <input id="direccion" placeholder="Calle, número, colonia *" autocomplete="street-address">
+  <div class="pin-actions">
+  </div>
+</div>
+<select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta al entregar</option></select>
+<textarea id="notas" rows="3" placeholder="Notas del pedido"></textarea>
+<button class="order" onclick="sendWA()">🧾 Revisar pedido / recibo</button>
+<p class="small">Al compartir el recibo, en iPhone podrás elegir WhatsApp desde el menú de compartir. Por seguridad, WhatsApp siempre requiere que confirmes el envío.</p>
+</div></aside>
+
+<div id="modalback" class="modalback"><div class="modal" id="modal"></div></div>
+
+
+
+<nav class="mobile-nav" aria-label="Navegación móvil">
+  <button class="active" onclick="event.preventDefault();go(\'recomendados\')"><span>⌂</span>Inicio</button>
+  <button onclick="event.preventDefault();go(\'hamburguesas\')"><span>🍔</span>Menú</button>
+  <button onclick="event.preventDefault();go(\'ubicacion\')"><span>📍</span>Ubicación</button>
+</nav>
+
+<div id="receiptBack" class="receipt-back">
+  <div class="receipt-modal">
+    <div class="receipt-paper" id="receiptPaper"></div>
+    <div class="receipt-actions">
+      <button class="wa-receipt" onclick="shareReceiptImage()">📲 Enviar recibo por WhatsApp</button><div style="text-align:center;font-size:11px;color:#777;margin-top:6px">Se compartirá la imagen del recibo a WhatsApp: <b>+52 56 3695 1217</b></div>
       <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
       <button class="close-receipt" onclick="event.preventDefault();go(\'hamburguesas\')">🍔 Volver al menú</button>
     </div>
@@ -651,8 +855,8 @@ function go(id){
   try{closeCart();}catch(e){}
   try{closeReceipt();}catch(e){}
   try{closeModal();}catch(e){}
-  const el=document.getElementById(id);
   const track=document.getElementById('categoryTrack');
+  const el=document.getElementById(id);
 
   if(id==='inicio' || id==='home' || id==='promociones'){
     window.scrollTo({top:0,behavior:'smooth'});
@@ -660,12 +864,12 @@ function go(id){
   }
 
   if(id==='menu'){
-    const target=window.__lpLastCategory || track?.querySelector('.section')?.id;
-    if(target && track){
+    const target=window.__lpLastCategory || (track && track.querySelector('.section')?.id);
+    if(track && target){
       const sec=document.getElementById(target);
       if(sec){
         track.scrollTo({left:sec.offsetLeft,behavior:'smooth'});
-        setTimeout(()=>window.__lpRestoreMenuPosition(target),180);
+        setTimeout(()=>window.__lpRestorePosition(target),180);
         return;
       }
     }
@@ -673,25 +877,25 @@ function go(id){
     return;
   }
 
-  // Category navigation: ONLY move the horizontal category track.
+  // Category: only move the horizontal category track.
   if(track && el && el.parentElement===track){
     window.__lpLastCategory=id;
     track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
-    setTimeout(()=>window.__lpRestoreMenuPosition(id),150);
+    setTimeout(()=>window.__lpRestorePosition(id),120);
     return;
   }
 
   if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});
 }
 window.__lpCategoryPositions=window.__lpCategoryPositions||{};
-window.__lpRestoreMenuPosition=function(id){
+window.__lpRestorePosition=function(id){
   const sec=document.getElementById(id);
   if(!sec)return;
   const pos=window.__lpCategoryPositions[id];
-  if(typeof pos==='number') sec.scrollTo({top:pos,behavior:'smooth'});
+  if(typeof pos==='number')sec.scrollTo({top:pos,behavior:'smooth'});
   const a=window.__lpLastArticle;
-  if(a && a.category===id && typeof a.top==='number'){
-    setTimeout(()=>sec.scrollTo({top:Math.max(0,a.top-20),behavior:'smooth'}),120);
+  if(a&&a.category===id&&typeof a.top==='number'){
+    setTimeout(()=>sec.scrollTo({top:Math.max(0,a.top-20),behavior:'smooth'}),100);
   }
 };
 document.addEventListener('scroll',function(){
@@ -722,20 +926,21 @@ function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});ren
 
 const LP_BURGERS = {
   "Sencilla": {
-    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
+    cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
+    cheeseMode:"simplePlusMonterrey",
     ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     extras:[["Tocino",10]]
   },
-  "Hawaiana": {
-    cheeseMode:"multi",
+    "Hawaiana": {
+    cheeseMode:"multiPlusMonterrey",
     cheeses:["Q amarillo","Q Oaxaca"],
     cheeseDefaults:["Q amarillo","Q Oaxaca"],
     defaultCheese:"Q amarillo",
     ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     included:["Jamón","Tocino"],
-    extras:[["Monterrey",20],["Tocino extra",10]]
+    extras:[["Monterrey",20]]
   },
   "Doble carne": {
     cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
@@ -798,7 +1003,7 @@ function lpSaucePrice(total){
 }
 
 function customWingsV13(pieces,base){
-window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
+  window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"wings",name:`Alitas ${pieces} piezas`,solo,conPapas};
@@ -815,7 +1020,7 @@ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
       <div class="lp-v11-heading"><span>🌶️</span><div>
         <b>Salsa</b><small>Elige una salsa</small>
       </div></div>
-      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"checkbox")).join("")}
     </section>`;
 
   lpModifierShell(`🍗 Alitas ${pieces} piezas`,"Personaliza tu orden.",body,solo);
@@ -828,7 +1033,7 @@ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
 }
 
 function customBonelessV13(pieces,base){
-window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
+  window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"boneless",name:`Boneless ${pieces} piezas`,solo,conPapas};
@@ -845,7 +1050,7 @@ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
       <div class="lp-v11-heading"><span>🌶️</span><div>
         <b>Salsa</b><small>Elige una salsa</small>
       </div></div>
-      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"checkbox")).join("")}
     </section>`;
 
   lpModifierShell(`🍗 Boneless ${pieces} piezas`,"Personaliza tu orden.",body,solo);
@@ -858,120 +1063,165 @@ window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
 }
 
 function confirmChickenV13(){
-  if(!pending) return;
+  if(!pending)return;
   const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
-  const sauce=document.querySelector('#modal input[name="lpChickenSauce"]:checked');
-  if(!p || !sauce){ alert('Selecciona la presentación y la salsa.'); return; }
+  const sauces=[...document.querySelectorAll('#modal input[name="lpChickenSauce"]:checked')].map(x=>x.value);
+  const max=window.__lpSauceMax||2;
+  if(!p){alert('Selecciona si quieres Solo o Con papas.');return;}
+  if(!sauces.length){alert('Selecciona al menos una salsa.');return;}
+  if(sauces.length>max){alert('Demasiadas salsas para esta presentación.');return;}
   const conPapas=p.value==="Con papas";
   const price=Number(p.dataset.price||pending.solo);
-  const extra=conPapas?`Con papas (+$${pending.conPapas-pending.solo})`:"Solo";
-  const details=`Presentación: ${extra} · Salsa: ${sauce.value}`;
+  const details=(conPapas?`Papas: Con papas (+$${pending.conPapas-pending.solo})`:"Papas: Sin papas")+` · Salsas: ${sauces.join(", ")}`;
   addConfigured(pending.name,price,details);
   closeModal();
 }
 
+
 function customHotDog(name,solo,conPapas){
   pending={type:"hotdog",name,solo,conPapas};
   const ingredients=["Cebolla","Jitomate","Mayonesa","Catsup","Mostaza","Chiles"];
-
   const body=`
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🌭</span><div>
-        <b>Papas</b><small>Elige cómo quieres tu Hot Dog</small>
-      </div></div>
+      <div class="lp-v11-heading"><span>🌭</span><div><b>Papas</b><small>Elige cómo quieres tu Hot Dog</small></div></div>
       ${lpOption("Solo","lpHotPresentation",true,"radio",String(solo))}
       ${lpOption("Con papas","lpHotPresentation",false,"radio",String(conPapas))}
     </section>
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🥬</span><div>
-        <b>Ingredientes</b><small>Desmarca lo que no quieras</small>
-      </div></div>
+      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes incluidos</small></div></div>
+      ${lpOption("Con todo","lpHotAll",false,"checkbox")}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🥬</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
       ${ingredients.map(x=>lpOption(x,"lpHotIngredient",true)).join("")}
     </section>`;
-
   lpModifierShell(`🌭 Hot Dog ${name}`,"Personaliza tu Hot Dog.",body,solo);
-  document.querySelectorAll('#modal input').forEach(x=>{
-    x.addEventListener('change',()=>{
-      const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
-      const total=Number(presentation?.dataset.price||solo);
-      const el=document.getElementById('lpV11Total');
-      if(el) el.textContent='$'+total;
-    });
-  });
-  document.getElementById('lpV11Confirm').onclick=()=>confirmHotDog();
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
+    const all=document.querySelector('#modal input[name="lpHotAll"]')?.checked;
+    document.querySelectorAll('#modal input[name="lpHotIngredient"]').forEach(i=>{i.disabled=all;const l=i.closest('label');if(l)l.style.opacity=all?.45:'1'});
+    const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
+    const el=document.getElementById('lpV11Total');
+    if(el)el.textContent='$'+Number(presentation?.dataset.price||solo);
+  }));
+  document.getElementById('lpV11Confirm').onclick=confirmHotDog;
 }
-
 function confirmHotDog(){
   const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
-  const conPapas=presentation?.value==="Con papas";
+  const all=document.querySelector('#modal input[name="lpHotAll"]')?.checked;
   const price=Number(presentation?.dataset.price||pending.solo);
-  const ingredients = lpConTodoOrSpecs();
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpHotIngredient"]:checked')].map(x=>x.value);
   const details=[
-    conPapas?"Presentación: Con papas (+$"+(pending.conPapas-pending.solo)+")":"Presentación: Solo",
-    "Ingredientes: "+(ingredients.length?ingredients.join(", "):"ninguno")
+    presentation?.value==="Con papas"?"Presentación: Con papas (+$"+(pending.conPapas-pending.solo)+")":"Presentación: Solo",
+    all?"Ingredientes: Con todo":("Ingredientes: "+(ingredients.length?ingredients.join(", "):"ninguno"))
   ].join(" · ");
   addConfigured("Hot Dog "+pending.name,price,details);
   closeModal();
 }
 
+
 function customBurger(name,base){
   const cfg=LP_BURGERS[name] || LP_BURGERS[Object.keys(LP_BURGERS).find(k=>k.toLowerCase()===name.toLowerCase())];
-  if(!cfg){ return; }
+  if(!cfg)return;
   pending={type:"burger",name,base,cfg};
 
-  let body = `<section class="lp-v11-section">
-    <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu hamburguesa con papas</small></div></div>
-    ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
-  </section>
-  <section class="lp-v11-section">
-    <div class="lp-v11-heading"><span>🧀</span><div><b>${cfg.cheeseMode==="multi"?"Quesos":"Queso"}</b><small>${cfg.cheeseMode==="multi"?"Puedes mantener los quesos incluidos y agregar Monterrey":"Elige una opción"}</small></div></div>
-    ${cfg.cheeseMode==="multi"
-      ? cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",cfg.cheeseDefaults.includes(c),"checkbox")).join("")
-      : cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
-  </section>`;
+  let cheeseBlock="";
+  if(cfg.cheeseMode==="multiPlusMonterrey"){
+    cheeseBlock=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🧀</span><div><b>Quesos</b><small>Amarillo y Oaxaca incluidos</small></div></div>
+      ${lpOption("Q amarillo","lpV11Cheese",true,"checkbox")}
+      ${lpOption("Q Oaxaca","lpV11Cheese",true,"checkbox")}
+      ${lpOption("Queso Monterrey","lpV11Monterrey",false,"checkbox",20)}
+    </section>`;
+  }else if(cfg.cheeseMode==="simplePlusMonterrey"){
+    cheeseBlock=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige amarillo u Oaxaca</small></div></div>
+      ${lpOption("Q amarillo","lpV11Cheese",true,"radio")}
+      ${lpOption("Q Oaxaca","lpV11Cheese",false,"radio")}
+      ${lpOption("Queso Monterrey","lpV11Monterrey",false,"checkbox",20)}
+    </section>`;
+  }else{
+    cheeseBlock=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige una opción</small></div></div>
+      ${cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
+    </section>`;
+  }
+
+  let body=`
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu hamburguesa con papas</small></div></div>
+      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+    </section>
+    ${cheeseBlock}
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes de la receta</small></div></div>
+      ${lpOption("Con todo","lpV11All",false,"checkbox")}
+    </section>`;
 
   if(cfg.included?.length){
-    body += `<section class="lp-v11-section">
+    body+=`<section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍍</span><div><b>Incluido en la receta</b><small>Así viene por defecto</small></div></div>
       ${cfg.included.map(x=>lpOption(x,"lpV11Included",true)).join("")}
     </section>`;
   }
 
-  body += `<section class="lp-v11-section">
+  body+=`<section class="lp-v11-section">
     <div class="lp-v11-heading"><span>🥬</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
     ${cfg.ingredients.map(x=>lpOption(x,"lpV11Ingredient",cfg.defaults.includes(x))).join("")}
   </section>`;
 
-  if(cfg.extras.length){
-    body += `<section class="lp-v11-section">
+  if(cfg.extras?.length){
+    body+=`<section class="lp-v11-section">
       <div class="lp-v11-heading"><span>➕</span><div><b>Extras</b><small>Agrega por un costo adicional</small></div></div>
-      ${cfg.extras.map(([x,p])=>lpOption(x,"lpV11Extra",false,"checkbox",p)).join("")}
+      ${cfg.extras.map(([x,pr])=>lpOption(x,"lpV11Extra",false,"checkbox",pr)).join("")}
     </section>`;
   }
 
-
-
   lpModifierShell(`🍔 ${name}`,"Personaliza tu hamburguesa como la quieres.",body,base);
-  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
-  document.getElementById('lpV11Confirm').onclick=()=>confirmBurgerV11();
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{lpSyncBurgerOptions();lpUpdateTotal(base);}));
+  lpSyncBurgerOptions();
+  document.getElementById('lpV11Confirm').onclick=confirmBurgerV11;
 }
+
+function lpSyncBurgerOptions(){
+  const all=document.querySelector('#modal input[name="lpV11All"]');
+  if(all){
+    document.querySelectorAll('#modal input[name="lpV11Ingredient"]').forEach(x=>{
+      x.disabled=all.checked;
+      const l=x.closest('label');if(l)l.style.opacity=all.checked?.45:'1';
+    });
+  }
+  const m=document.querySelector('#modal input[name="lpV11Monterrey"]');
+  if(m){
+    document.querySelectorAll('#modal input[name="lpV11Cheese"]').forEach(x=>{
+      x.disabled=m.checked;
+      const l=x.closest('label');if(l)l.style.opacity=m.checked?.45:'1';
+    });
+  }
+}
+
 
 function lpFriesSelected(){
   return !!document.querySelector('#modal input[name="lpV11Fries"]:checked');
 }
 
 function confirmBurgerV11(){
-  const p=Number(pending.base||0);
-  const cheeseEls=[...document.querySelectorAll('#modal input[name="lpV11Cheese"]:checked')];
-  const cheese=cheeseEls.map(x=>x.value).join(", ");
-  const ingredients = lpConTodoOrSpecs();
+  const base=Number(pending.base||0);
+  const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
+  const monterrey=document.querySelector('#modal input[name="lpV11Monterrey"]')?.checked;
+  const cheeses=[...document.querySelectorAll('#modal input[name="lpV11Cheese"]:checked')].map(x=>x.value);
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpV11Ingredient"]:checked')].map(x=>x.value);
   const included=[...document.querySelectorAll('#modal input[name="lpV11Included"]:checked')].map(x=>x.value);
   const extras=[...document.querySelectorAll('#modal input[name="lpV11Extra"]:checked')].map(x=>`${x.value} (+$${x.dataset.price})`);
   const fries=lpFriesSelected();
-  const total=lpUpdateTotal(p);
+  const total=lpUpdateTotal(base);
+  const cheeseText=monterrey?"Queso Monterrey (+$20)":(cheeses.length?cheeses.join(", "):"Sin queso");
+  const detailIngredients=all?"Con todo":(ingredients.length?ingredients.join(", "):"ninguno");
   const details=[
-    `Queso: ${cheese}`,
-    `Ingredientes: ${ingredients.length?ingredients.join(", "):"ninguno"}`,
+    `Queso: ${cheeseText}`,
+    `Ingredientes: ${detailIngredients}`,
     included.length?`Incluye: ${included.join(", ")}`:"",
     extras.length?`Extras: ${extras.join(", ")}`:"",
     fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
@@ -980,37 +1230,45 @@ function confirmBurgerV11(){
   closeModal();
 }
 
-function customBurrito(name,base){
-  let key=Object.keys(LP_BURRITOS).find(k=>k.toLowerCase()===name.toLowerCase()) || name;
-  const ingredients=LP_BURRITOS[key] || ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"];
-  pending={type:"burrito",name,base,ingredients};
 
-  const body = `
+function customBurrito(name,base){
+  let key=Object.keys(LP_BURRITOS).find(k=>k.toLowerCase()===name.toLowerCase())||name;
+  const ingredients=LP_BURRITOS[key]||["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"];
+  pending={type:"burrito",name,base,ingredients};
+  const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu burrito con papas</small></div></div>
       ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
     </section>
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Seleccionados por defecto · puedes quitar cualquiera</small></div></div>
+      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes incluidos</small></div></div>
+      ${lpOption("Con todo","lpV11All",false,"checkbox")}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
       ${ingredients.map(x=>lpOption(x,"lpV11BurritoIngredient",true)).join("")}
     </section>`;
-
   lpModifierShell(`🌯 Burrito ${name}`,"Arma tu burrito con los ingredientes que prefieras.",body,base);
-  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
-  document.getElementById('lpV11Confirm').onclick=()=>confirmBurritoV11();
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
+    const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
+    document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]').forEach(i=>{i.disabled=all;const l=i.closest('label');if(l)l.style.opacity=all?.45:'1'});
+    lpUpdateTotal(base);
+  }));
+  document.getElementById('lpV11Confirm').onclick=confirmBurritoV11;
 }
-
 function confirmBurritoV11(){
+  const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
   const total=lpUpdateTotal(pending.base);
-  const ingredients = lpConTodoOrSpecs();
+  const ingredients=[...document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]:checked')].map(x=>x.value);
   const fries=lpFriesSelected();
   const details=[
-    ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Sin ingredientes",
+    all?"Ingredientes: Con todo":(ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Ingredientes: ninguno"),
     fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
   ].join(" · ");
   addConfigured("Burrito "+pending.name,total,details);
   closeModal();
 }
+
 
 function customFrappe(name,base){
 pending={name,base};
@@ -1049,17 +1307,14 @@ function buildOrder(){
   const notas=document.getElementById('notas').value.trim();
   const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
   const orderNo=String(Date.now()).slice(-5);
-  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
-   const pinLabel=document.getElementById('pinStatus')?.textContent||'';
-   return {;
+  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'}); return {direccion,nombre,pago,notas,total,orderNo,date};
 }
 
 function makeMessage(o){
   let msg='*NUEVO PEDIDO - LA PARADA*\n';
   msg+=`Pedido #${o.orderNo}\n\n`;
   msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n`;
-   if(o.googlePin) msg+=`*📍 Pin Google Maps:* ${\n`;
-   msg+=`*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
+msg+=`*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
   cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\n  _'+x.extra+'_':''}\n`);
   msg+=`\n*TOTAL: $${o.total}*`;
   if(o.notas)msg+=`\n\n*Notas:* ${o.notas}`;
@@ -1084,7 +1339,28 @@ function showReceipt(){
     ${lines}
     <div class="receipt-total"><span>TOTAL</span><span>$${o.total}</span></div>
     ${o.notas?`<div class="receipt-data"><b>NOTAS:</b><br>${esc(o.notas)}</div><hr class="receipt-rule">`:''}
-    <div class="receipt-thanks">¡GRACIAS POR TU PEDIDO!<br>TE ESPERAMOS<br>🫏/g,'&gt;').replace(/"/g,'&quot;');
+    <div class="receipt-thanks">¡GRACIAS POR TU PEDIDO!<br>TE ESPERAMOS<br>🫏</div>
+  `;
+  document.getElementById('receiptBack').classList.add('show');
+}
+
+function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
+
+
+
+
+
+
+
+function sendWA(){showReceipt()}
+
+function sendReceiptText(){
+  const o=buildOrder(); if(!o)return;
+  window.open(`https://wa.me/${WA}?text=${encodeURIComponent(makeMessage(o))}`,'_blank');
+}
+
+function receiptSvg(o){
+  const escSvg=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   const width=800;
   let y=165;
   let items='';
@@ -1283,29 +1559,18 @@ if(categoryTrack && categorySections.length){
 <script>
 document.addEventListener('click',function(e){
   const b=e.target.closest('button,[onclick]');
-  if(!b || !b.closest('#categoryTrack')) return;
+  if(!b||!b.closest('#categoryTrack'))return;
   const oc=b.getAttribute('onclick')||'';
-  if(!/addSimple|addConfigured|customBurger|customBurrito|customHotDog|customWings|customBoneless|customWingsV13|customBonelessV13/i.test(oc)) return;
+  if(!/addSimple|addConfigured|customBurger|customBurrito|customHotDog|customWings|customBoneless|customWingsV13|customBonelessV13/i.test(oc))return;
   const sec=b.closest('.section');
   if(sec){
     window.__lpLastCategory=sec.id;
     window.__lpCategoryPositions=window.__lpCategoryPositions||{};
     window.__lpCategoryPositions[sec.id]=sec.scrollTop;
-    const card=b.closest('.product-card,.product,.card');
-    if(card) window.__lpLastArticle={category:sec.id,top:card.offsetTop};
+    const card=b.closest('.card,.product-card,.product');
+    if(card)window.__lpLastArticle={category:sec.id,top:card.offsetTop};
   }
 },true);
-</script><script>
-window.lpConTodoOrSpecs=function(){
-  const all=document.querySelector('#modal input[name="lpV11All"]');
-  if(all && all.checked) return 'Con todo';
-  const vals=[
-    ...document.querySelectorAll('#modal input[name="lpV11Ingredient"]:checked'),
-    ...document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]:checked'),
-    ...document.querySelectorAll('#modal input[name="lpHotDogIngredient"]:checked')
-  ].map(x=>x.value);
-  return vals.length ? vals.join(', ') : 'Sin ingredientes';
-};
 </script><script>
 document.addEventListener('change',function(e){
   if(e.target.name!=='lpChickenSauce')return;
@@ -1313,7 +1578,8 @@ document.addEventListener('change',function(e){
   const boxes=[...document.querySelectorAll('#modal input[name="lpChickenSauce"]')];
   const checked=boxes.filter(x=>x.checked);
   if(checked.length>max)e.target.checked=false;
-  boxes.forEach(x=>x.disabled=!x.checked && boxes.filter(y=>y.checked).length>=max);
+  const c=boxes.filter(x=>x.checked).length;
+  boxes.forEach(x=>{x.disabled=!x.checked&&c>=max;const l=x.closest('label');if(l)l.style.opacity=(!x.checked&&c>=max)?.45:'1'});
 });
 </script></body>
 </html>
