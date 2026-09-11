@@ -403,7 +403,7 @@ body{
   color:var(--lp-ivory)!important;
   border:1px solid rgba(210,133,33,.25)!important;
 }
-.location h2,.location h3,.location strong,.location p,.location b{color:#fff!important;opacity:1!important}
+.location h2,.location h3,.location strong{color:#fff!important}
 .location a{color:var(--lp-orange)!important}
 .bottom-nav{
   background:var(--lp-charcoal)!important;
@@ -612,20 +612,7 @@ input:focus,select:focus,textarea:focus{
 #modal input[name="lpChickenSauce"]{accent-color:#F86103}
 </style>
 
-<style>
-/* FINAL VISIBILITY / NAV FIX */
-.location p,.location b{color:#fff!important;opacity:1!important;text-shadow:0 1px 1px rgba(0,0,0,.25)}
-.mobile-nav{z-index:10000!important;pointer-events:auto!important}
-.mobile-nav button{z-index:10001!important;pointer-events:auto!important}
-.drawer,.back{z-index:40!important}
-.receipt-back{z-index:70!important}
-</style>
-<style>
-.location p,.location b,.location strong,.location h2,.location h3{color:#fff!important;opacity:1!important}
-.mobile-nav,.mobile-nav button{z-index:10000!important;pointer-events:auto!important}
-.lp-v11-option input:disabled+span{opacity:.45;text-decoration:line-through}
-#categoryTrack{overscroll-behavior-x:contain}
-</style></head>
+</head>
 <body>
 
 <header class="header">
@@ -677,15 +664,15 @@ input:focus,select:focus,textarea:focus{
 </div>
 
 <nav class="cats"><div class="cat-inner">
-<button class="cat active" onclick="event.preventDefault();go(\'recomendados\')">⭐ Recomendados</button>
-<button class="cat" onclick="event.preventDefault();go(\'hamburguesas\')">🍔 Hamburguesas</button>
-<button class="cat" onclick="event.preventDefault();go(\'burritos\')">🌯 Burritos</button>
-<button class="cat" onclick="event.preventDefault();go(\'alitas\')">🍗 Alitas</button>
-<button class="cat" onclick="event.preventDefault();go(\'boneless\')">🍗 Boneless</button>
-<button class="cat" onclick="event.preventDefault();go(\'hotdogs\')">🌭 Hot Dogs</button>
-<button class="cat" onclick="event.preventDefault();go(\'papas\')">🍟 Papas</button>
-<button class="cat" onclick="event.preventDefault();go(\'frappes\')">🥤 Frappés</button>
-<button class="cat" onclick="event.preventDefault();go(\'bebidas\')">🥤 Bebidas</button>
+<button class="cat active" onclick="go('recomendados')">⭐ Recomendados</button>
+<button class="cat" onclick="go('hamburguesas')">🍔 Hamburguesas</button>
+<button class="cat" onclick="go('burritos')">🌯 Burritos</button>
+<button class="cat" onclick="go('alitas')">🍗 Alitas</button>
+<button class="cat" onclick="go('boneless')">🍗 Boneless</button>
+<button class="cat" onclick="go('hotdogs')">🌭 Hot Dogs</button>
+<button class="cat" onclick="go('papas')">🍟 Papas</button>
+<button class="cat" onclick="go('frappes')">🥤 Frappés</button>
+<button class="cat" onclick="go('bebidas')">🥤 Bebidas</button>
 </div></nav>
 
 <div class="promo-wrap">
@@ -814,7 +801,16 @@ input:focus,select:focus,textarea:focus{
   <label for="direccion"><b>📍 Dirección de entrega</b></label>
   <input id="direccion" placeholder="Calle, número, colonia *" autocomplete="street-address">
   <div class="pin-actions">
+    <button type="button" class="pin-btn" onclick="useMyLocation()">📍 Usar mi ubicación</button>
+    <button type="button" class="pin-btn secondary-pin" onclick="showPinHelp()">🗺️ Agregar pin de Google</button>
   </div>
+  <div id="pinBox" class="pin-box" hidden>
+    <label for="googlePin">Pega aquí el enlace del pin de Google Maps</label>
+    <input id="googlePin" type="url" inputmode="url" placeholder="https://maps.app.goo.gl/..." autocomplete="off">
+    <small>En Google Maps: coloca el pin → Compartir → Copiar enlace → pégalo aquí.</small>
+    <button type="button" class="pin-save" onclick="saveGooglePin()">✓ Guardar pin</button>
+  </div>
+  <div id="pinStatus" class="pin-status"></div>
 </div>
 <select id="pago"><option>Efectivo</option><option>Transferencia</option><option>Tarjeta al entregar</option></select>
 <textarea id="notas" rows="3" placeholder="Notas del pedido"></textarea>
@@ -827,9 +823,9 @@ input:focus,select:focus,textarea:focus{
 
 
 <nav class="mobile-nav" aria-label="Navegación móvil">
-  <button class="active" onclick="event.preventDefault();go(\'recomendados\')"><span>⌂</span>Inicio</button>
-  <button onclick="event.preventDefault();go(\'hamburguesas\')"><span>🍔</span>Menú</button>
-  <button onclick="event.preventDefault();go(\'ubicacion\')"><span>📍</span>Ubicación</button>
+  <button class="active" onclick="go('recomendados')"><span>⌂</span>Inicio</button>
+  <button onclick="go('hamburguesas')"><span>🍔</span>Menú</button>
+  <button onclick="go('ubicacion')"><span>📍</span>Ubicación</button>
 </nav>
 
 <div id="receiptBack" class="receipt-back">
@@ -838,7 +834,6 @@ input:focus,select:focus,textarea:focus{
     <div class="receipt-actions">
       <button class="wa-receipt" onclick="shareReceiptImage()">📲 Enviar recibo por WhatsApp</button><div style="text-align:center;font-size:11px;color:#777;margin-top:6px">Se compartirá la imagen del recibo a WhatsApp: <b>+52 56 3695 1217</b></div>
       <button class="close-receipt" onclick="closeReceipt()">Volver al carrito</button>
-      <button class="close-receipt" onclick="event.preventDefault();go(\'hamburguesas\')">🍔 Volver al menú</button>
     </div>
   </div>
 </div>
@@ -852,63 +847,15 @@ function esc(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;',
 function openCart(){document.getElementById('drawer').classList.add('show');document.getElementById('back').classList.add('show');}
 function closeCart(){document.getElementById('drawer').classList.remove('show');document.getElementById('back').classList.remove('show');}
 function go(id){
-  try{closeCart();}catch(e){}
-  try{closeReceipt();}catch(e){}
-  try{closeModal();}catch(e){}
-  const track=document.getElementById('categoryTrack');
   const el=document.getElementById(id);
-
-  if(id==='inicio' || id==='home' || id==='promociones'){
-    window.scrollTo({top:0,behavior:'smooth'});
-    return;
-  }
-
-  if(id==='menu'){
-    const target=window.__lpLastCategory || (track && track.querySelector('.section')?.id);
-    if(track && target){
-      const sec=document.getElementById(target);
-      if(sec){
-        track.scrollTo({left:sec.offsetLeft,behavior:'smooth'});
-        setTimeout(()=>window.__lpRestorePosition(target),180);
-        return;
-      }
-    }
-    if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});
-    return;
-  }
-
-  // Category: only move the horizontal category track.
-  if(track && el && el.parentElement===track){
-    window.__lpLastCategory=id;
-    track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
-    setTimeout(()=>window.__lpRestorePosition(id),120);
-    return;
-  }
-
-  if(el) window.scrollTo({top:el.getBoundingClientRect().top+window.pageYOffset-10,behavior:'smooth'});
-}
-window.__lpCategoryPositions=window.__lpCategoryPositions||{};
-window.__lpRestorePosition=function(id){
-  const sec=document.getElementById(id);
-  if(!sec)return;
-  const pos=window.__lpCategoryPositions[id];
-  if(typeof pos==='number')sec.scrollTo({top:pos,behavior:'smooth'});
-  const a=window.__lpLastArticle;
-  if(a&&a.category===id&&typeof a.top==='number'){
-    setTimeout(()=>sec.scrollTo({top:Math.max(0,a.top-20),behavior:'smooth'}),100);
-  }
-};
-document.addEventListener('scroll',function(){
+  if(!el) return;
   const track=document.getElementById('categoryTrack');
-  if(!track)return;
-  const secs=[...track.querySelectorAll('.section')];
-  let active=null,best=Infinity;
-  secs.forEach(sec=>{const r=sec.getBoundingClientRect(),d=Math.abs(r.left);if(d<best){best=d;active=sec;}});
-  if(active){
-    window.__lpLastCategory=active.id;
-    window.__lpCategoryPositions[active.id]=active.scrollTop;
+  if(track && el.parentElement===track){
+    track.scrollTo({left:el.offsetLeft,behavior:'smooth'});
+  }else{
+    el.scrollIntoView({behavior:'smooth'});
   }
-},{passive:true});
+}
 function filterMenu(q){
   q = q.trim().toLowerCase();
   document.querySelectorAll('.card').forEach(card=>{
@@ -926,21 +873,17 @@ function addConfigured(name,price,extra){cart.push({name,price,qty:1,extra});ren
 
 const LP_BURGERS = {
   "Sencilla": {
-    cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
-    cheeseMode:"simplePlusMonterrey",
+    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
     ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     extras:[["Tocino",10]]
   },
-    "Hawaiana": {
-    cheeseMode:"multiPlusMonterrey",
-    cheeses:["Q amarillo","Q Oaxaca"],
-    cheeseDefaults:["Q amarillo","Q Oaxaca"],
-    defaultCheese:"Q amarillo",
+  "Hawaiana": {
+    cheeses:["Q amarillo"], defaultCheese:"Q amarillo",
     ingredients:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     defaults:["Cebolla","Jitomate","Lechuga","Pepinillos","Chiles","Mayonesa","Catsup","Mostaza"],
     included:["Jamón","Tocino"],
-    extras:[["Monterrey",20]]
+    extras:[["Tocino extra",10]]
   },
   "Doble carne": {
     cheeses:["Q amarillo","Q Oaxaca"], defaultCheese:"Q amarillo",
@@ -1003,7 +946,6 @@ function lpSaucePrice(total){
 }
 
 function customWingsV13(pieces,base){
-  window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"wings",name:`Alitas ${pieces} piezas`,solo,conPapas};
@@ -1011,7 +953,7 @@ function customWingsV13(pieces,base){
   const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍗</span><div>
-        <b>Papas</b><small>Elige cómo quieres tus alitas</small>
+        <b>Presentación</b><small>Elige cómo quieres tus alitas</small>
       </div></div>
       ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
       ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
@@ -1020,7 +962,7 @@ function customWingsV13(pieces,base){
       <div class="lp-v11-heading"><span>🌶️</span><div>
         <b>Salsa</b><small>Elige una salsa</small>
       </div></div>
-      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"checkbox")).join("")}
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
     </section>`;
 
   lpModifierShell(`🍗 Alitas ${pieces} piezas`,"Personaliza tu orden.",body,solo);
@@ -1033,7 +975,6 @@ function customWingsV13(pieces,base){
 }
 
 function customBonelessV13(pieces,base){
-  window.__lpSauceMax=(Number(pieces)===18||String(pieces).includes('18'))?3:2;
   const solo=Number(base||0);
   const conPapas=solo+15;
   pending={type:"boneless",name:`Boneless ${pieces} piezas`,solo,conPapas};
@@ -1041,7 +982,7 @@ function customBonelessV13(pieces,base){
   const body=`
     <section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍗</span><div>
-        <b>Papas</b><small>Elige cómo quieres tus boneless</small>
+        <b>Presentación</b><small>Elige cómo quieres tus boneless</small>
       </div></div>
       ${lpOption("Solo","lpChickenPresentation",true,"radio",solo)}
       ${lpOption("Con papas","lpChickenPresentation",false,"radio",conPapas)}
@@ -1050,7 +991,7 @@ function customBonelessV13(pieces,base){
       <div class="lp-v11-heading"><span>🌶️</span><div>
         <b>Salsa</b><small>Elige una salsa</small>
       </div></div>
-      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"checkbox")).join("")}
+      ${LP_SAUCES.map((x,i)=>lpOption(x,"lpChickenSauce",i===0,"radio")).join("")}
     </section>`;
 
   lpModifierShell(`🍗 Boneless ${pieces} piezas`,"Personaliza tu orden.",body,solo);
@@ -1063,165 +1004,112 @@ function customBonelessV13(pieces,base){
 }
 
 function confirmChickenV13(){
-  if(!pending)return;
+  if(!pending) return;
   const p=document.querySelector('#modal input[name="lpChickenPresentation"]:checked');
-  const sauces=[...document.querySelectorAll('#modal input[name="lpChickenSauce"]:checked')].map(x=>x.value);
-  const max=window.__lpSauceMax||2;
-  if(!p){alert('Selecciona si quieres Solo o Con papas.');return;}
-  if(!sauces.length){alert('Selecciona al menos una salsa.');return;}
-  if(sauces.length>max){alert('Demasiadas salsas para esta presentación.');return;}
-  const conPapas=p.value==="Con papas";
+  const sauce=document.querySelector('#modal input[name="lpChickenSauce"]:checked');
+  if(!p || !sauce){ alert('Selecciona la presentación y la salsa.'); return; }
+  const conPapas=p.value==="papas";
   const price=Number(p.dataset.price||pending.solo);
-  const details=(conPapas?`Papas: Con papas (+$${pending.conPapas-pending.solo})`:"Papas: Sin papas")+` · Salsas: ${sauces.join(", ")}`;
+  const extra=conPapas?`Con papas (+$${pending.conPapas-pending.solo})`:"Solo";
+  const details=`Presentación: ${extra} · Salsa: ${sauce.value}`;
   addConfigured(pending.name,price,details);
   closeModal();
 }
 
-
 function customHotDog(name,solo,conPapas){
   pending={type:"hotdog",name,solo,conPapas};
   const ingredients=["Cebolla","Jitomate","Mayonesa","Catsup","Mostaza","Chiles"];
+
   const body=`
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🌭</span><div><b>Papas</b><small>Elige cómo quieres tu Hot Dog</small></div></div>
+      <div class="lp-v11-heading"><span>🌭</span><div>
+        <b>Presentación</b><small>Elige cómo quieres tu Hot Dog</small>
+      </div></div>
       ${lpOption("Solo","lpHotPresentation",true,"radio",String(solo))}
       ${lpOption("Con papas","lpHotPresentation",false,"radio",String(conPapas))}
     </section>
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes incluidos</small></div></div>
-      ${lpOption("Con todo","lpHotAll",false,"checkbox")}
-    </section>
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🥬</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
+      <div class="lp-v11-heading"><span>🥬</span><div>
+        <b>Ingredientes</b><small>Desmarca lo que no quieras</small>
+      </div></div>
       ${ingredients.map(x=>lpOption(x,"lpHotIngredient",true)).join("")}
     </section>`;
+
   lpModifierShell(`🌭 Hot Dog ${name}`,"Personaliza tu Hot Dog.",body,solo);
-  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
-    const all=document.querySelector('#modal input[name="lpHotAll"]')?.checked;
-    document.querySelectorAll('#modal input[name="lpHotIngredient"]').forEach(i=>{i.disabled=all;const l=i.closest('label');if(l)l.style.opacity=all?.45:'1'});
-    const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
-    const el=document.getElementById('lpV11Total');
-    if(el)el.textContent='$'+Number(presentation?.dataset.price||solo);
-  }));
-  document.getElementById('lpV11Confirm').onclick=confirmHotDog;
+  document.querySelectorAll('#modal input').forEach(x=>{
+    x.addEventListener('change',()=>{
+      const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
+      const total=Number(presentation?.dataset.price||solo);
+      const el=document.getElementById('lpV11Total');
+      if(el) el.textContent='$'+total;
+    });
+  });
+  document.getElementById('lpV11Confirm').onclick=()=>confirmHotDog();
 }
+
 function confirmHotDog(){
   const presentation=document.querySelector('#modal input[name="lpHotPresentation"]:checked');
-  const all=document.querySelector('#modal input[name="lpHotAll"]')?.checked;
+  const conPapas=presentation?.value==="papas";
   const price=Number(presentation?.dataset.price||pending.solo);
   const ingredients=[...document.querySelectorAll('#modal input[name="lpHotIngredient"]:checked')].map(x=>x.value);
   const details=[
-    presentation?.value==="Con papas"?"Presentación: Con papas (+$"+(pending.conPapas-pending.solo)+")":"Presentación: Solo",
-    all?"Ingredientes: Con todo":("Ingredientes: "+(ingredients.length?ingredients.join(", "):"ninguno"))
+    conPapas?"Presentación: Con papas (+$"+(pending.conPapas-pending.solo)+")":"Presentación: Solo",
+    "Ingredientes: "+(ingredients.length?ingredients.join(", "):"ninguno")
   ].join(" · ");
   addConfigured("Hot Dog "+pending.name,price,details);
   closeModal();
 }
 
-
 function customBurger(name,base){
   const cfg=LP_BURGERS[name] || LP_BURGERS[Object.keys(LP_BURGERS).find(k=>k.toLowerCase()===name.toLowerCase())];
-  if(!cfg)return;
+  if(!cfg){ return; }
   pending={type:"burger",name,base,cfg};
 
-  let cheeseBlock="";
-  if(cfg.cheeseMode==="multiPlusMonterrey"){
-    cheeseBlock=`
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🧀</span><div><b>Quesos</b><small>Amarillo y Oaxaca incluidos</small></div></div>
-      ${lpOption("Q amarillo","lpV11Cheese",true,"checkbox")}
-      ${lpOption("Q Oaxaca","lpV11Cheese",true,"checkbox")}
-      ${lpOption("Queso Monterrey","lpV11Monterrey",false,"checkbox",20)}
-    </section>`;
-  }else if(cfg.cheeseMode==="simplePlusMonterrey"){
-    cheeseBlock=`
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige amarillo u Oaxaca</small></div></div>
-      ${lpOption("Q amarillo","lpV11Cheese",true,"radio")}
-      ${lpOption("Q Oaxaca","lpV11Cheese",false,"radio")}
-      ${lpOption("Queso Monterrey","lpV11Monterrey",false,"checkbox",20)}
-    </section>`;
-  }else{
-    cheeseBlock=`
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige una opción</small></div></div>
-      ${cfg.cheeses.map(c=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
-    </section>`;
-  }
-
-  let body=`
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu hamburguesa con papas</small></div></div>
-      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
-    </section>
-    ${cheeseBlock}
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes de la receta</small></div></div>
-      ${lpOption("Con todo","lpV11All",false,"checkbox")}
-    </section>`;
+  let body = `<section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🧀</span><div><b>Queso</b><small>Elige una opción</small></div></div>
+    ${cfg.cheeses.map((c,i)=>lpOption(c,"lpV11Cheese",c===cfg.defaultCheese,"radio")).join("")}
+  </section>`;
 
   if(cfg.included?.length){
-    body+=`<section class="lp-v11-section">
+    body += `<section class="lp-v11-section">
       <div class="lp-v11-heading"><span>🍍</span><div><b>Incluido en la receta</b><small>Así viene por defecto</small></div></div>
       ${cfg.included.map(x=>lpOption(x,"lpV11Included",true)).join("")}
     </section>`;
   }
 
-  body+=`<section class="lp-v11-section">
+  body += `<section class="lp-v11-section">
     <div class="lp-v11-heading"><span>🥬</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
     ${cfg.ingredients.map(x=>lpOption(x,"lpV11Ingredient",cfg.defaults.includes(x))).join("")}
   </section>`;
 
-  if(cfg.extras?.length){
-    body+=`<section class="lp-v11-section">
+  if(cfg.extras.length){
+    body += `<section class="lp-v11-section">
       <div class="lp-v11-heading"><span>➕</span><div><b>Extras</b><small>Agrega por un costo adicional</small></div></div>
-      ${cfg.extras.map(([x,pr])=>lpOption(x,"lpV11Extra",false,"checkbox",pr)).join("")}
+      ${cfg.extras.map(([x,p])=>lpOption(x,"lpV11Extra",false,"checkbox",p)).join("")}
     </section>`;
   }
 
+  body += `<section class="lp-v11-section">
+    <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Opcional</small></div></div>
+    ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
+  </section>`;
+
   lpModifierShell(`🍔 ${name}`,"Personaliza tu hamburguesa como la quieres.",body,base);
-  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{lpSyncBurgerOptions();lpUpdateTotal(base);}));
-  lpSyncBurgerOptions();
-  document.getElementById('lpV11Confirm').onclick=confirmBurgerV11;
-}
-
-function lpSyncBurgerOptions(){
-  const all=document.querySelector('#modal input[name="lpV11All"]');
-  if(all){
-    document.querySelectorAll('#modal input[name="lpV11Ingredient"]').forEach(x=>{
-      x.disabled=all.checked;
-      const l=x.closest('label');if(l)l.style.opacity=all.checked?.45:'1';
-    });
-  }
-  const m=document.querySelector('#modal input[name="lpV11Monterrey"]');
-  if(m){
-    document.querySelectorAll('#modal input[name="lpV11Cheese"]').forEach(x=>{
-      x.disabled=m.checked;
-      const l=x.closest('label');if(l)l.style.opacity=m.checked?.45:'1';
-    });
-  }
-}
-
-
-function lpFriesSelected(){
-  return !!document.querySelector('#modal input[name="lpV11Fries"]:checked');
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
+  document.getElementById('lpV11Confirm').onclick=()=>confirmBurgerV11();
 }
 
 function confirmBurgerV11(){
-  const base=Number(pending.base||0);
-  const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
-  const monterrey=document.querySelector('#modal input[name="lpV11Monterrey"]')?.checked;
-  const cheeses=[...document.querySelectorAll('#modal input[name="lpV11Cheese"]:checked')].map(x=>x.value);
+  const p=Number(pending.base||0);
+  const cheese=document.querySelector('#modal input[name="lpV11Cheese"]:checked')?.value || "";
   const ingredients=[...document.querySelectorAll('#modal input[name="lpV11Ingredient"]:checked')].map(x=>x.value);
   const included=[...document.querySelectorAll('#modal input[name="lpV11Included"]:checked')].map(x=>x.value);
   const extras=[...document.querySelectorAll('#modal input[name="lpV11Extra"]:checked')].map(x=>`${x.value} (+$${x.dataset.price})`);
-  const fries=lpFriesSelected();
-  const total=lpUpdateTotal(base);
-  const cheeseText=monterrey?"Queso Monterrey (+$20)":(cheeses.length?cheeses.join(", "):"Sin queso");
-  const detailIngredients=all?"Con todo":(ingredients.length?ingredients.join(", "):"ninguno");
+  const fries=document.getElementById('lpV11Fries')?.checked;
+  const total=lpUpdateTotal(p);
   const details=[
-    `Queso: ${cheeseText}`,
-    `Ingredientes: ${detailIngredients}`,
+    `Queso: ${cheese}`,
+    `Ingredientes: ${ingredients.length?ingredients.join(", "):"ninguno"}`,
     included.length?`Incluye: ${included.join(", ")}`:"",
     extras.length?`Extras: ${extras.join(", ")}`:"",
     fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
@@ -1230,45 +1118,37 @@ function confirmBurgerV11(){
   closeModal();
 }
 
-
 function customBurrito(name,base){
-  let key=Object.keys(LP_BURRITOS).find(k=>k.toLowerCase()===name.toLowerCase())||name;
-  const ingredients=LP_BURRITOS[key]||["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"];
+  let key=Object.keys(LP_BURRITOS).find(k=>k.toLowerCase()===name.toLowerCase()) || name;
+  const ingredients=LP_BURRITOS[key] || ["Frijoles","Q Oaxaca","Cebolla","Cilantro","Guacamole"];
   pending={type:"burrito",name,base,ingredients};
-  const body=`
+
+  const body = `
     <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🍟</span><div><b>Papas</b><small>Elige si quieres tu burrito con papas</small></div></div>
-      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
-    </section>
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>⭐</span><div><b>Con todo</b><small>Todos los ingredientes incluidos</small></div></div>
-      ${lpOption("Con todo","lpV11All",false,"checkbox")}
-    </section>
-    <section class="lp-v11-section">
-      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Desmarca lo que no quieras</small></div></div>
+      <div class="lp-v11-heading"><span>🌯</span><div><b>Ingredientes</b><small>Seleccionados por defecto · puedes quitar cualquiera</small></div></div>
       ${ingredients.map(x=>lpOption(x,"lpV11BurritoIngredient",true)).join("")}
+    </section>
+    <section class="lp-v11-section">
+      <div class="lp-v11-heading"><span>🍟</span><div><b>Presentación</b><small>Elige si quieres papas</small></div></div>
+      ${lpOption("Con papas","lpV11Fries",false,"checkbox",15)}
     </section>`;
+
   lpModifierShell(`🌯 Burrito ${name}`,"Arma tu burrito con los ingredientes que prefieras.",body,base);
-  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>{
-    const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
-    document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]').forEach(i=>{i.disabled=all;const l=i.closest('label');if(l)l.style.opacity=all?.45:'1'});
-    lpUpdateTotal(base);
-  }));
-  document.getElementById('lpV11Confirm').onclick=confirmBurritoV11;
+  document.querySelectorAll('#modal input').forEach(x=>x.addEventListener('change',()=>lpUpdateTotal(base)));
+  document.getElementById('lpV11Confirm').onclick=()=>confirmBurritoV11();
 }
+
 function confirmBurritoV11(){
-  const all=document.querySelector('#modal input[name="lpV11All"]')?.checked;
   const total=lpUpdateTotal(pending.base);
   const ingredients=[...document.querySelectorAll('#modal input[name="lpV11BurritoIngredient"]:checked')].map(x=>x.value);
-  const fries=lpFriesSelected();
+  const fries=document.getElementById('lpV11Fries')?.checked;
   const details=[
-    all?"Ingredientes: Con todo":(ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Ingredientes: ninguno"),
+    ingredients.length?`Ingredientes: ${ingredients.join(", ")}`:"Sin ingredientes",
     fries?"Papas: Con papas (+$15)":"Papas: Sin papas"
   ].join(" · ");
   addConfigured("Burrito "+pending.name,total,details);
   closeModal();
 }
-
 
 function customFrappe(name,base){
 pending={name,base};
@@ -1307,14 +1187,18 @@ function buildOrder(){
   const notas=document.getElementById('notas').value.trim();
   const total=cart.reduce((s,x)=>s+x.price*x.qty,0);
   const orderNo=String(Date.now()).slice(-5);
-  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'}); return {direccion,nombre,pago,notas,total,orderNo,date};
+  const date=new Date().toLocaleString('es-MX',{dateStyle:'short',timeStyle:'short'});
+  const googlePin=(document.getElementById('googlePin')?.value||'').trim();
+   const pinLabel=document.getElementById('pinStatus')?.textContent||'';
+   return {direccion,nombre,pago,notas,total,orderNo,date,googlePin,pinLabel};
 }
 
 function makeMessage(o){
   let msg='*NUEVO PEDIDO - LA PARADA*\n';
   msg+=`Pedido #${o.orderNo}\n\n`;
   msg+=`*Cliente:* ${o.nombre}\n*Dirección:* ${o.direccion}\n`;
-msg+=`*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
+   if(o.googlePin) msg+=`*📍 Pin Google Maps:* ${o.googlePin}\n`;
+   msg+=`*Pago:* ${o.pago}\n\n*PEDIDO:*\n`;
   cart.forEach(x=>msg+=`• ${x.qty} x ${x.name} — $${x.price*x.qty}${x.extra?'\n  _'+x.extra+'_':''}\n`);
   msg+=`\n*TOTAL: $${o.total}*`;
   if(o.notas)msg+=`\n\n*Notas:* ${o.notas}`;
@@ -1346,11 +1230,54 @@ function showReceipt(){
 
 function closeReceipt(){document.getElementById('receiptBack').classList.remove('show')}
 
+function showPinHelp(){
+  const box=document.getElementById('pinBox');
+  if(box) box.hidden=!box.hidden;
+  if(!box.hidden) document.getElementById('googlePin')?.focus();
+}
 
+function saveGooglePin(){
+  const input=document.getElementById('googlePin');
+  const status=document.getElementById('pinStatus');
+  const value=(input?.value||'').trim();
+  if(!value){
+    if(status) status.textContent='Pega primero el enlace de tu pin.';
+    return;
+  }
+  const ok=/^(https?:\/\/)?([^\s]+\.)?google\.[^\s]+/i.test(value) || /maps\.app\.goo\.gl|maps\.google\./i.test(value);
+  if(!ok){
+    if(status) status.textContent='Ese enlace no parece ser de Google Maps.';
+    return;
+  }
+  if(status){
+    status.textContent='✓ Pin de Google Maps agregado al pedido';
+    status.classList.add('ok');
+  }
+}
 
-
-
-
+function useMyLocation(){
+  const status=document.getElementById('pinStatus');
+  const address=document.getElementById('direccion');
+  if(!navigator.geolocation){
+    if(status) status.textContent='Tu navegador no permite obtener la ubicación.';
+    return;
+  }
+  if(status) status.textContent='Obteniendo tu ubicación…';
+  navigator.geolocation.getCurrentPosition(pos=>{
+    const lat=pos.coords.latitude.toFixed(6);
+    const lng=pos.coords.longitude.toFixed(6);
+    const url=`https://www.google.com/maps?q=${lat},${lng}`;
+    const pin=document.getElementById('googlePin');
+    if(pin) pin.value=url;
+    if(status){
+      status.textContent='✓ Ubicación agregada como pin de Google Maps';
+      status.classList.add('ok');
+    }
+    if(address && !address.value) address.value='Ubicación actual (pin en Google Maps)';
+  },()=>{
+    if(status) status.textContent='No pudimos obtener tu ubicación. Puedes pegar un pin de Google Maps.';
+  },{enableHighAccuracy:true,timeout:10000,maximumAge:60000});
+}
 
 function sendWA(){showReceipt()}
 
@@ -1556,30 +1483,5 @@ if(categoryTrack && categorySections.length){
 })();
 </script>
 
-<script>
-document.addEventListener('click',function(e){
-  const b=e.target.closest('button,[onclick]');
-  if(!b||!b.closest('#categoryTrack'))return;
-  const oc=b.getAttribute('onclick')||'';
-  if(!/addSimple|addConfigured|customBurger|customBurrito|customHotDog|customWings|customBoneless|customWingsV13|customBonelessV13/i.test(oc))return;
-  const sec=b.closest('.section');
-  if(sec){
-    window.__lpLastCategory=sec.id;
-    window.__lpCategoryPositions=window.__lpCategoryPositions||{};
-    window.__lpCategoryPositions[sec.id]=sec.scrollTop;
-    const card=b.closest('.card,.product-card,.product');
-    if(card)window.__lpLastArticle={category:sec.id,top:card.offsetTop};
-  }
-},true);
-</script><script>
-document.addEventListener('change',function(e){
-  if(e.target.name!=='lpChickenSauce')return;
-  const max=window.__lpSauceMax||2;
-  const boxes=[...document.querySelectorAll('#modal input[name="lpChickenSauce"]')];
-  const checked=boxes.filter(x=>x.checked);
-  if(checked.length>max)e.target.checked=false;
-  const c=boxes.filter(x=>x.checked).length;
-  boxes.forEach(x=>{x.disabled=!x.checked&&c>=max;const l=x.closest('label');if(l)l.style.opacity=(!x.checked&&c>=max)?.45:'1'});
-});
-</script></body>
+</body>
 </html>
